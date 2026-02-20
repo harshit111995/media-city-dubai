@@ -1,0 +1,202 @@
+.hero {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-sm);
+    background: white;
+    /* Optional: usage of the line art as a subtle background or main element */
+    background-image: url('/images/hero-minimalist.png');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    /* Soften the image */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* High opacity overlay to keep it subtle */
+}
+
+.heroContent {
+    max-width: 900px;
+    animation: fadeIn 0.8s ease-out;
+    z-index: 2;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--color-secondary);
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-family: var(--font-inter);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.04em;
+    color: var(--color-text-main);
+}
+
+.subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--color-text-muted);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.ctaGroup {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Sections */
+.section {
+    padding: 6rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.splitLayout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+/* Reverse layout for alternating sections */
+.splitLayoutReverse {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+
+    .splitLayout,
+    .splitLayoutReverse {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    /* Ensure image is arguably better on top or bottom depending on content, 
+       but standard flow is usually Text -> Image or Image -> Text. 
+       We can accept default stacking order or use order property if strictly needed.
+    */
+}
+
+.textContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.sectionTitle {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    color: var(--color-text-main);
+}
+
+.sectionText {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.imageContainer {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background: var(--color-secondary);
+    /* Aspect ratio placeholder if image loads slowly */
+    aspect-ratio: 4/3;
+}
+
+.sectionImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.imageContainer:hover .sectionImage {
+    transform: scale(1.03);
+}
+
+/* Tools Strip (Keep as simple grid or bar) */
+.toolsSection {
+    background: var(--color-secondary);
+    padding: 4rem 1rem;
+    margin: 4rem 0;
+}
+
+.featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.featureCard {
+    background: white;
+    border: 1px solid var(--color-border);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.featureCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
+}
+
+.cardIcon {
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-main);
+}
+
+.cardText {
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

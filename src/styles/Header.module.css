@@ -1,0 +1,97 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: var(--spacing-sm) 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.scrolled {
+    box-shadow: var(--shadow-sm);
+    padding: 0.5rem 0;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+
+.logo {
+    font-family: var(--font-inter);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--color-text-main);
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.navLinks {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.navLink {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color var(--transition-fast);
+}
+
+.navLink:hover,
+.activeLink {
+    color: var(--color-accent);
+}
+
+.mobileMenuBtn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-text-main);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .navLinks {
+        display: none;
+    }
+
+    .mobileMenuBtn {
+        display: block;
+    }
+}
+
+.searchForm {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.searchInput {
+    background: var(--color-secondary);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    /* Less rounded for minimalist feel */
+    padding: 0.4rem 0.8rem;
+    color: var(--color-text-main);
+    font-size: 0.85rem;
+    width: 150px;
+    font-family: var(--font-inter);
+    transition: all 0.2s;
+}
+
+.searchInput:focus {
+    outline: none;
+    background: white;
+    border-color: var(--color-border);
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+    width: 200px;
+}

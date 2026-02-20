@@ -1,0 +1,80 @@
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { tools } from '@/data/tools';
+import styles from '@/styles/tools.module.css';
+
+interface Props {
+    params: {
+        category: string;
+    };
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
+    const { category } = await params;
+    const decodedCategory = decodeURIComponent(category);
+
+    return {
+        title: `${decodedCategory} Tools | Media City Dubai`,
+        description: `Discover the best ${decodedCategory} solutions for media professionals in Dubai.`,
+    };
+}
+
+export default async function ToolCategoryPage({ params }: { params: Promise<{ category: string }> }) {
+    const { category } = await params;
+    // Decode URL encoded category (e.g., AI%20Tools -> AI Tools)
+    const decodedCategory = decodeURIComponent(category);
+
+    // Case-insensitive comparison
+    const categoryTools = tools.filter(t =>
+        t.category.toLowerCase() === decodedCategory.toLowerCase()
+    );
+
+    if (categoryTools.length === 0) {
+        return (
+            <div className={styles.container}>
+                <div className="text-center py-20">
+                    <h1 className="text-3xl font-bold mb-4">Category Not Found</h1>
+                    <Link href="/tools" className="text-accent hover:underline">Return to Tools Directory</Link>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div className={styles.container}>
+            <Link href="/tools" className="flex items-center gap-2 text-accent mb-6 font-medium">
+                <ArrowLeft size={20} /> Back to All Tools
+            </Link>
+
+            <header className={styles.pageHeader}>
+                <h1 className={`${styles.title} text-gradient !text-5xl mb-4`}>{decodedCategory}</h1>
+                <p className={styles.description}>
+                    Curated selection of top {decodedCategory} solutions.
+                </p>
+            </header>
+
+            <div className={styles.grid}>
+                {categoryTools.map((tool) => (
+                    <Link href={`/tools/${tool.slug}`} key={tool.id} className={styles.card}>
+                        <div className={styles.cardHeader}>
+                            <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent">
+                                {tool.name.substring(0, 2)}
+                            </div>
+                            <span className={styles.categoryTag}>{tool.category}</span>
+                        </div>
+
+                        <h2 className={styles.cardTitle}>{tool.name}</h2>
+                        <p className={styles.shortDesc}>{tool.shortDescription}</p>
+
+                        <div className={styles.cardFooter}>
+                            <span className={styles.price}>{tool.pricing}</span>
+                            <ArrowRight className="text-accent" size={20} />
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+}
