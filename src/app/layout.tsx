@@ -34,6 +34,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-NHN56LC7');`}} />
         {/* End Google Tag Manager */}
+        {/* Google AdSense Script (Manual Placement in Head) */}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4468459107811853" crossOrigin="anonymous"></script>
       </head>
       <body>
         {/* Google Tag Manager (noscript) */}
@@ -71,16 +73,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}} />
             id="microsoft-pubcenter"
             strategy="afterInteractive"
             src={`https://ads.microsoft.com/pubcenter/js/pubcenter.js?id=${process.env.NEXT_PUBLIC_PUBCENTER_ID}`}
-          />
-        )}
-
-        {/* Google AdSense Script */}
-        {process.env.NEXT_PUBLIC_ADSENSE_ID && (
-          <Script
-            id="google-adsense"
-            strategy="afterInteractive"
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_ID}`}
-            crossOrigin="anonymous"
           />
         )}
       </body>
