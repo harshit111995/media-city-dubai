@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createEvent, updateEvent } from '@/app/actions';
-import { Event } from '../../generated/prisma';
+import { Event } from '@prisma/client';
 
 interface EventFormProps {
     event?: Event;

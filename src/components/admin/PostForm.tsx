@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createPost, updatePost } from '@/app/actions';
-import { Post } from '../../generated/prisma';
+import { Post } from '@prisma/client';
 
 interface PostFormProps {
     post?: Post;

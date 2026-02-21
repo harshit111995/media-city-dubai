@@ -1,5 +1,5 @@
 
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { forumTopics } from '../src/data/forum';
 import { events } from '../src/data/events';
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createTool, updateTool } from '@/app/actions';
-import { Tool } from '../../generated/prisma';
+import { Tool } from '@prisma/client';
 
 interface ToolFormProps {
     tool?: Tool;
