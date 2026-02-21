@@ -11,12 +11,34 @@ interface PostFormProps {
 export default function PostForm({ post }: PostFormProps) {
     const action = post ? updatePost.bind(null, post.id) : createPost;
     const [preview, setPreview] = useState<string | null>(post?.headerImage || null);
+    const [title, setTitle] = useState(post?.title || '');
+    const [slug, setSlug] = useState(post?.slug || '');
+    const [isAutoSlug, setIsAutoSlug] = useState(!post);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             setPreview(URL.createObjectURL(file));
         }
+    };
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTitle = e.target.value;
+        setTitle(newTitle);
+
+        if (isAutoSlug) {
+            setSlug(
+                newTitle
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)+/g, '')
+            );
+        }
+    };
+
+    const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSlug(e.target.value);
+        setIsAutoSlug(false);
     };
 
     return (
@@ -26,7 +48,8 @@ export default function PostForm({ post }: PostFormProps) {
                     <label className="block text-sm font-medium mb-1">Title</label>
                     <input
                         name="title"
-                        defaultValue={post?.title}
+                        value={title}
+                        onChange={handleTitleChange}
                         required
                         className="w-full border p-2 rounded"
                     />
@@ -35,7 +58,8 @@ export default function PostForm({ post }: PostFormProps) {
                     <label className="block text-sm font-medium mb-1">Slug</label>
                     <input
                         name="slug"
-                        defaultValue={post?.slug}
+                        value={slug}
+                        onChange={handleSlugChange}
                         required
                         className="w-full border p-2 rounded"
                     />
@@ -61,6 +85,25 @@ export default function PostForm({ post }: PostFormProps) {
                         <option value="Tech Support">Tech Support</option>
                         <option value="General Discussion">General Discussion</option>
                     </select>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium mb-1">Tags</label>
+                    <input
+                        name="tags"
+                        defaultValue={post?.tags || ''}
+                        placeholder="Comma separated tags (e.g. AI, Future, Startup)"
+                        className="w-full border p-2 rounded"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium mb-1">Published Date & Time</label>
+                    <input
+                        type="datetime-local"
+                        name="publishedAt"
+                        defaultValue={post?.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16)}
+                        required
+                        className="w-full border p-2 rounded"
+                    />
                 </div>
             </div>
 
@@ -88,7 +131,6 @@ export default function PostForm({ post }: PostFormProps) {
                         )}
                     </div>
                 </div>
-
             </div>
 
             <div>

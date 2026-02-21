@@ -1,8 +1,9 @@
 import PostForm from '@/components/admin/PostForm';
-import { PrismaClient } from '../../../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import { deletePost } from '@/app/actions';
 
-const prisma = new PrismaClient();
+
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -20,7 +21,15 @@ export default async function EditPostPage({ params }: PageProps) {
 
     return (
         <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-6">Edit Post</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">Edit Post</h1>
+                <form action={deletePost.bind(null, post.id)}>
+                    <button type="submit" className="text-red-600 hover:text-red-800 font-medium">
+                        Delete Post
+                    </button>
+                </form>
+            </div>
+
             <PostForm post={post} />
         </div>
     );

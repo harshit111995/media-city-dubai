@@ -2,9 +2,10 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import styles from '@/styles/events.module.css';
-import { PrismaClient } from '../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
+
 
 export const metadata: Metadata = {
     title: 'Upcoming Media & Technology Events in Dubai | Media City Dubai',

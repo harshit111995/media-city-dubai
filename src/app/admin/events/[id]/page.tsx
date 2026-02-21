@@ -1,8 +1,8 @@
 import EventForm from '@/components/admin/EventForm';
-import { PrismaClient } from '../../../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 
-const prisma = new PrismaClient();
+
 
 interface PageProps {
     params: Promise<{ id: string }>;

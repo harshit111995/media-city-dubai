@@ -1,10 +1,12 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Clock } from 'lucide-react';
 import styles from '@/styles/forum.module.css';
-import { PrismaClient } from '../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
+
 
 export const metadata: Metadata = {
     title: 'Media Community Forum | Media City Dubai',
@@ -13,7 +15,10 @@ export const metadata: Metadata = {
 
 export default async function ForumPage() {
     const forumTopics = await prisma.post.findMany({
-        orderBy: { createdAt: 'desc' },
+        where: {
+            publishedAt: { lte: new Date() }
+        },
+        orderBy: { publishedAt: 'desc' },
     });
 
     const jsonLd = {
@@ -61,11 +66,6 @@ export default async function ForumPage() {
             <div className={styles.topicList}>
                 {forumTopics.map((topic) => (
                     <div key={topic.id} className={styles.topicRow}>
-                        {topic.thumbnail && (
-                            <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 mr-4">
-                                <img src={topic.thumbnail} alt={topic.title} className="w-full h-full object-cover" />
-                            </div>
-                        )}
                         <div className={styles.topicMain}>
                             <span className={styles.topicCategory}>{topic.category}</span>
                             <Link href={`/forum/topic/${topic.slug}`} className={styles.topicTitle}>

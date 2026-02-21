@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Share2 } from 'lucide-react';
 import styles from '@/styles/forum.module.css';
-import { PrismaClient } from '../../../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 interface Props {
     params: {
@@ -87,14 +87,10 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
 
                 {topic.headerImage && (
                     <div className="relative h-[50vh] w-full mb-8 rounded-xl overflow-hidden shadow-lg">
-                        <div
-                            className="absolute inset-0 bg-cover bg-center"
-                            style={{
-                                backgroundImage: `url(${topic.headerImage})`,
-                                backgroundAttachment: 'fixed',
-                                backgroundPosition: 'center',
-                                backgroundSize: 'cover'
-                            }}
+                        <img
+                            src={topic.headerImage}
+                            alt={topic.title}
+                            className="w-full h-full object-cover"
                         />
                     </div>
                 )}

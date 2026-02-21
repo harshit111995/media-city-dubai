@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calendar, MapPin, ArrowLeft, Clock, User } from 'lucide-react';
 import styles from '@/styles/events.module.css';
-import { PrismaClient } from '../../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
+
 
 interface Props {
     params: {

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from '@/styles/tools.module.css';
 import { Tool } from '@/data/tools';
@@ -73,15 +74,16 @@ export default function ToolsList({ tools }: ToolsListProps) {
                     <Link href={`/tools/${tool.slug}`} key={tool.id} className={styles.card}>
                         <div className={styles.cardHeader}>
                             <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent overflow-hidden relative">
-                                {tool.logo.startsWith('/') ? (
+                                {(tool.logo.startsWith('/') || tool.logo.startsWith('http')) ? (
                                     <>
                                         {!failedImages.has(tool.id) && (
-                                            /* eslint-disable-next-line @next/next/no-img-element */
-                                            <img
+                                            <Image
                                                 src={tool.logo}
                                                 alt={tool.name}
-                                                className="w-full h-full object-contain p-2 relative z-10"
+                                                fill
+                                                className="object-contain p-2 z-10"
                                                 onError={() => handleImageError(tool.id)}
+                                                sizes="48px"
                                             />
                                         )}
                                         <span className={`absolute inset-0 flex items-center justify-center z-0 ${!failedImages.has(tool.id) ? 'opacity-0' : 'opacity-100'}`}>

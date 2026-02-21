@@ -1,24 +1,21 @@
 import Link from 'next/link';
-import { PrismaClient } from '../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 import styles from '@/styles/admin.module.css';
 
-// Initialize Prisma
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-    const posts = await prisma.post.findMany({
-        orderBy: { createdAt: 'desc' },
-    });
-
-    const events = await prisma.event.findMany({
-        orderBy: { createdAt: 'desc' },
-    });
+    const [posts, events, tools] = await Promise.all([
+        prisma.post.findMany({ orderBy: { createdAt: 'desc' } }),
+        prisma.event.findMany({ orderBy: { createdAt: 'desc' } }),
+        prisma.tool.findMany({ orderBy: { createdAt: 'desc' } })
+    ]);
 
     return (
         <div className="container mx-auto p-8">
             <h1 className="text-3xl font-bold mb-8">CMS Dashboard</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Posts Section */}
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex justify-between items-center mb-4">
@@ -68,6 +65,32 @@ export default async function AdminDashboard() {
                             </div>
                         ))}
                         {events.length === 0 && <p className="text-gray-500">No events found.</p>}
+                    </div>
+                </div>
+
+                {/* Tools Section */}
+                <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">Tools</h2>
+                        <Link href="/admin/tools/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Create Tool
+                        </Link>
+                    </div>
+                    <div className="space-y-4">
+                        {tools.map((tool) => (
+                            <div key={tool.id} className="border-b pb-2 flex justify-between items-center">
+                                <div>
+                                    <h3 className="font-medium">{tool.title}</h3>
+                                    <span className="text-sm text-gray-500">{tool.category}</span>
+                                </div>
+                                <div className="space-x-2">
+                                    <Link href={`/admin/tools/${tool.id}`} className="text-blue-600 hover:underline">
+                                        Edit
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                        {tools.length === 0 && <p className="text-gray-500">No tools found.</p>}
                     </div>
                 </div>
             </div>

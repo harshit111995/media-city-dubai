@@ -1,10 +1,12 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Clock } from 'lucide-react';
 import styles from '@/styles/forum.module.css';
-import { PrismaClient } from '../../../../generated/prisma';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
+
 
 interface Props {
     params: {
@@ -27,8 +29,11 @@ export default async function ForumCategoryPage({ params }: { params: Promise<{ 
     const decodedCategory = decodeURIComponent(category);
 
     const categoryTopics = await prisma.post.findMany({
-        where: { category: decodedCategory },
-        orderBy: { createdAt: 'desc' },
+        where: {
+            category: decodedCategory,
+            publishedAt: { lte: new Date() }
+        },
+        orderBy: { publishedAt: 'desc' },
     });
 
     return (
