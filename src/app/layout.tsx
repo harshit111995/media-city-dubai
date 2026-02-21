@@ -44,7 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe>`}} />
         {/* End Google Tag Manager (noscript) */}
         <Header />
-        <main className="min-h-screen" style={{ paddingTop: '120px' }}>
+        <main className="min-h-screen" style={{ paddingTop: '100px' }}>
           {/* Force padding-top since Tailwind is missing */}
           {children}
         </main>
