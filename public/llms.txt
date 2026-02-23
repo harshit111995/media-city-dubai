@@ -1,0 +1,10 @@
+# Media City Dubai
+
+Media City Dubai is the premier digital ecosystem and hub for media, adtech, and events in Dubai.
+This website serves as a community platform, events directory, and tool repository for industry professionals.
+
+## Key Sections
+- /forum: Engaging discussions on Industry News, Tech Support, Career Advice, and General Discussion.
+- /events: Curated calendar of upcoming conferences, workshops, and networking mixers happening in Dubai.
+- /tools: Essential industry solutions categorized by tech area such as AI Tools and AdTech.
+- /about: Information about the Media City Dubai platform.

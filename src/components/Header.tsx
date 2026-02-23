@@ -48,6 +48,25 @@ export default function Header() {
                     >
                         {isMobileMenuOpen ? <X /> : <Menu />}
                     </button>
+
+                    {/* Mobile Dropdown */}
+                    {isMobileMenuOpen && (
+                        <div className={styles.mobileMenu}>
+                            <Link href="/events" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Events</Link>
+                            <Link href="/tools" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Tools</Link>
+                            <Link href="/forum" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Forum</Link>
+                            <Link href="/about" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
+                            <form action="/search" className={styles.searchForm}>
+                                <input
+                                    type="text"
+                                    name="q"
+                                    placeholder="Search..."
+                                    className={styles.searchInput}
+                                    style={{ width: '100%' }}
+                                />
+                            </form>
+                        </div>
+                    )}
                 </nav>
             </div>
         </header>
