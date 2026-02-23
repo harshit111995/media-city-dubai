@@ -1,11 +1,11 @@
 .hero {
-    min-height: 90vh;
+    min-height: 50vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: var(--spacing-lg) var(--spacing-sm);
+    padding: 6rem 1rem 4rem 1rem;
     background: white;
     /* Optional: usage of the line art as a subtle background or main element */
     background-image: url('/images/hero-minimalist.png');
@@ -40,7 +40,7 @@
     font-family: var(--font-inter);
     font-weight: 800;
     font-size: clamp(3.5rem, 8vw, 6rem);
-    line-height: 1.05;
+    line-height: 1.15;
     margin-bottom: 1.5rem;
     letter-spacing: -0.04em;
     color: var(--color-text-main);
