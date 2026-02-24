@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-import { tools } from '@/data/tools';
 import ToolsList from '@/components/ToolsList';
 import styles from '@/styles/tools.module.css';
+import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
     title: 'AdTech & MarTech Tools Directory | Media City Dubai',
@@ -15,7 +15,13 @@ export const metadata: Metadata = {
     },
 };
 
-export default function ToolsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function ToolsPage() {
+    const dbTools = await prisma.tool.findMany({
+        orderBy: { title: 'asc' }
+    });
+
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
@@ -23,11 +29,11 @@ export default function ToolsPage() {
         description: 'Directory of software tools for marketing and advertising.',
         mainEntity: {
             '@type': 'ItemList',
-            itemListElement: tools.map((tool, index) => ({
+            itemListElement: dbTools.map((tool: { slug: string, title: string }, index: number) => ({
                 '@type': 'ListItem',
                 position: index + 1,
-                url: `https://mediacitydubai.com/tools/${tool.slug}`,
-                name: tool.name,
+                url: `https://media-city-dubai.vercel.app/tools/${tool.slug}`,
+                name: tool.title,
             })),
         },
     };
@@ -54,7 +60,7 @@ export default function ToolsPage() {
                 </div>
             </header>
 
-            <ToolsList tools={tools} />
+            <ToolsList tools={dbTools} />
         </div>
     );
 }

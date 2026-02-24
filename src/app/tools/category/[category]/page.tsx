@@ -2,8 +2,10 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { tools } from '@/data/tools';
 import styles from '@/styles/tools.module.css';
+import { prisma } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
 
 interface Props {
     params: {
@@ -26,10 +28,16 @@ export default async function ToolCategoryPage({ params }: { params: Promise<{ c
     // Decode URL encoded category (e.g., AI%20Tools -> AI Tools)
     const decodedCategory = decodeURIComponent(category);
 
-    // Case-insensitive comparison
-    const categoryTools = tools.filter(t =>
-        t.category.toLowerCase() === decodedCategory.toLowerCase()
-    );
+    // Case-insensitive comparison via Prisma
+    const categoryTools = await prisma.tool.findMany({
+        where: {
+            category: {
+                equals: decodedCategory,
+                mode: 'insensitive' // case-insensitive match
+            }
+        },
+        orderBy: { title: 'asc' }
+    });
 
     if (categoryTools.length === 0) {
         return (
@@ -56,20 +64,23 @@ export default async function ToolCategoryPage({ params }: { params: Promise<{ c
             </header>
 
             <div className={styles.grid}>
-                {categoryTools.map((tool) => (
+                {categoryTools.map((tool: { slug: string, id: string, imageUrl: string | null, title: string, category: string, description: string }) => (
                     <Link href={`/tools/${tool.slug}`} key={tool.id} className={styles.card}>
                         <div className={styles.cardHeader}>
-                            <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent">
-                                {tool.name.substring(0, 2)}
+                            <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent overflow-hidden relative">
+                                {tool.imageUrl ? (
+                                    <img src={tool.imageUrl} alt={tool.title} className="w-full h-full object-cover" />
+                                ) : (
+                                    tool.title.substring(0, 2)
+                                )}
                             </div>
                             <span className={styles.categoryTag}>{tool.category}</span>
                         </div>
 
-                        <h2 className={styles.cardTitle}>{tool.name}</h2>
-                        <p className={styles.shortDesc}>{tool.shortDescription}</p>
+                        <h2 className={styles.cardTitle}>{tool.title}</h2>
+                        <p className={styles.shortDesc}>{tool.description.substring(0, 80)}...</p>
 
                         <div className={styles.cardFooter}>
-                            <span className={styles.price}>{tool.pricing}</span>
                             <ArrowRight className="text-accent" size={20} />
                         </div>
                     </Link>

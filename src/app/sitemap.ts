@@ -13,10 +13,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const baseUrl = `${protocol}://${domain}`;
 
-    // Fetch dynamic routes from database
     const posts = await prisma.post.findMany({ select: { slug: true, updatedAt: true } });
     const events = await prisma.event.findMany({ select: { slug: true, updatedAt: true } });
     const tools = await prisma.tool.findMany({ select: { slug: true, updatedAt: true } });
+
+    const postCategories = await prisma.post.findMany({ distinct: ['category'], select: { category: true } });
+    const toolCategories = await prisma.tool.findMany({ distinct: ['category'], select: { category: true } });
 
     const postUrls = posts.map((post: { slug: string, updatedAt: Date }) => ({
         url: `${baseUrl}/forum/topic/${post.slug}`,
@@ -33,6 +35,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: tool.updatedAt,
     }));
 
+    const postCategoryUrls = postCategories.map((c: { category: string }) => ({
+        url: `${baseUrl}/forum/category/${encodeURIComponent(c.category)}`,
+        lastModified: new Date(),
+    }));
+
+    const toolCategoryUrls = toolCategories.map((c: { category: string }) => ({
+        url: `${baseUrl}/tools/category/${encodeURIComponent(c.category)}`,
+        lastModified: new Date(),
+    }));
+
     return [
         { url: baseUrl, lastModified: new Date() },
         { url: `${baseUrl}/events`, lastModified: new Date() },
@@ -42,5 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...postUrls,
         ...eventUrls,
         ...toolUrls,
+        ...postCategoryUrls,
+        ...toolCategoryUrls,
     ];
 }

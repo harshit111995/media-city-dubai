@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from '@/styles/tools.module.css';
-import { Tool } from '@/data/tools';
+
+import { Tool } from '@prisma/client';
 
 interface ToolsListProps {
     tools: Tool[];
@@ -21,10 +22,10 @@ export default function ToolsList({ tools }: ToolsListProps) {
     // Filter Logic
     const filteredTools = tools.filter((tool) => {
         if (selectedLetter === 'All') return true;
-        const firstChar = tool.name.charAt(0).toUpperCase();
+        const firstChar = tool.title.charAt(0).toUpperCase();
         if (selectedLetter === '#') return /^\d/.test(firstChar);
         return firstChar === selectedLetter;
-    }).sort((a, b) => a.name.localeCompare(b.name));
+    }).sort((a, b) => a.title.localeCompare(b.title));
 
     // Pagination Logic
     const totalPages = Math.ceil(filteredTools.length / itemsPerPage);
@@ -74,12 +75,12 @@ export default function ToolsList({ tools }: ToolsListProps) {
                     <Link href={`/tools/${tool.slug}`} key={tool.id} className={styles.card}>
                         <div className={styles.cardHeader}>
                             <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent overflow-hidden relative">
-                                {(tool.logo.startsWith('/') || tool.logo.startsWith('http')) ? (
+                                {tool.imageUrl ? (
                                     <>
                                         {!failedImages.has(tool.id) && (
                                             <Image
-                                                src={tool.logo}
-                                                alt={tool.name}
+                                                src={tool.imageUrl}
+                                                alt={tool.title}
                                                 fill
                                                 className="object-contain p-2 z-10"
                                                 onError={() => handleImageError(tool.id)}
@@ -87,30 +88,20 @@ export default function ToolsList({ tools }: ToolsListProps) {
                                             />
                                         )}
                                         <span className={`absolute inset-0 flex items-center justify-center z-0 ${!failedImages.has(tool.id) ? 'opacity-0' : 'opacity-100'}`}>
-                                            {tool.name.substring(0, 2)}
+                                            {tool.title.substring(0, 2)}
                                         </span>
                                     </>
                                 ) : (
-                                    tool.name.substring(0, 2)
+                                    tool.title.substring(0, 2)
                                 )}
                             </div>
                             <div className="text-right">
                                 <span className={styles.categoryTag}>{tool.category}</span>
-                                {tool.subCategory && (
-                                    <span className="block text-xs text-muted mt-1 uppercase tracking-wider font-semibold">
-                                        {tool.subCategory}
-                                    </span>
-                                )}
                             </div>
                         </div>
 
-                        <h2 className={styles.cardTitle}>{tool.name}</h2>
-                        <p className={styles.shortDesc}>{tool.shortDescription}</p>
-
-                        <div className={styles.cardFooter}>
-                            <span className={styles.price}>{tool.pricing}</span>
-                            <ArrowRight className="text-accent" size={20} />
-                        </div>
+                        <h2 className={styles.cardTitle}>{tool.title}</h2>
+                        <p className={styles.shortDesc}>{tool.description.substring(0, 80)}...</p>
                     </Link>
                 ))}
             </div>

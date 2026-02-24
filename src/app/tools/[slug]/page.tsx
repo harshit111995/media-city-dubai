@@ -1,41 +1,49 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Check, ExternalLink, Globe } from 'lucide-react';
-import { tools } from '@/data/tools';
+import { ArrowLeft, ExternalLink, Globe } from 'lucide-react';
 import styles from '@/styles/tools.module.css';
+import { prisma } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
 
 interface Props {
     params: {
-        slug: string; // Use slug to match folder structure if needed, or stick to id logic
+        slug: string; // Use slug to match folder structure
     };
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-    const { id } = await params;
-    const tool = tools.find((t) => t.slug === id);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const tool = await prisma.tool.findUnique({ where: { slug } });
 
     if (!tool) return { title: 'Tool Not Found' };
 
     return {
-        title: `${tool.name} Review & Features | Media City Dubai`,
+        title: `${tool.title} Review & Features | Media City Dubai`,
         description: tool.description,
+        openGraph: {
+            title: tool.title,
+            description: tool.description,
+            type: 'website'
+        }
     };
 }
 
-export default async function ToolDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const tool = tools.find((t) => t.slug === id);
+export default async function ToolDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const tool = await prisma.tool.findUnique({ where: { slug } });
 
     if (!tool) notFound();
 
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
-        name: tool.name,
-        applicationCategory: 'BusinessApplication',
+        name: tool.title,
+        applicationCategory: tool.category,
         operatingSystem: 'Web',
         description: tool.description,
+        url: tool.url,
         offers: {
             '@type': 'Offer',
             price: '0',
@@ -57,11 +65,15 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ id:
             <div className={styles.detailLayout}>
                 <main className={styles.mainContent}>
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center font-bold text-2xl text-accent">
-                            {tool.name.substring(0, 2)}
+                        <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center font-bold text-2xl text-accent overflow-hidden relative">
+                            {tool.imageUrl ? (
+                                <img src={tool.imageUrl} alt={tool.title} className="w-full h-full object-cover" />
+                            ) : (
+                                tool.title.substring(0, 2)
+                            )}
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold font-playfair">{tool.name}</h1>
+                            <h1 className="text-3xl font-bold font-playfair">{tool.title}</h1>
                             <span className="text-accent text-sm uppercase font-semibold">{tool.category}</span>
                         </div>
                     </div>
@@ -69,16 +81,6 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ id:
                     <p className="text-lg leading-relaxed text-gray-200 mb-8">
                         {tool.description}
                     </p>
-
-                    <h2 className="text-xl font-bold mb-4 font-playfair text-accent">Key Features</h2>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {tool.features.map((feature, idx) => (
-                            <li key={idx} className={styles.featureItem}>
-                                <Check className={styles.checkIcon} size={18} />
-                                {feature}
-                            </li>
-                        ))}
-                    </ul>
                 </main>
 
                 <aside className={styles.sidebar}>
@@ -87,14 +89,9 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ id:
 
                         <div className="space-y-4">
                             <div>
-                                <span className="block text-sm text-gray-400">Pricing Model</span>
-                                <span className="font-medium">{tool.pricing}</span>
-                            </div>
-
-                            <div>
                                 <span className="block text-sm text-gray-400">Website</span>
-                                <a href={tool.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-accent hover:underline">
-                                    Visit Site <ExternalLink size={14} />
+                                <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-accent hover:underline break-all">
+                                    Visit Site <ExternalLink size={14} className="flex-shrink-0" />
                                 </a>
                             </div>
                         </div>
