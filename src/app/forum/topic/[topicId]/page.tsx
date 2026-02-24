@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Share2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import styles from '@/styles/forum.module.css';
 import { prisma } from '@/lib/prisma';
 
@@ -96,7 +97,7 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
                 )}
 
                 <div className={styles.postContent}>
-                    {topic.content}
+                    <ReactMarkdown>{topic.content}</ReactMarkdown>
                 </div>
 
                 {/* Footer / Share only - Comments removed */}

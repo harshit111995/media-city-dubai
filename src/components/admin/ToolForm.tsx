@@ -64,6 +64,24 @@ export default function ToolForm({ tool }: ToolFormProps) {
                         <option value="Analytics">Analytics</option>
                     </select>
                 </div>
+                <div>
+                    <label className="block text-sm font-medium mb-1">Pricing (Optional)</label>
+                    <input
+                        name="pricing"
+                        defaultValue={tool?.pricing || ''}
+                        className="w-full border p-2 rounded"
+                        placeholder="e.g. Free, $10/mo, Enterprise"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium mb-1">Key Features (Optional)</label>
+                    <input
+                        name="features"
+                        defaultValue={tool?.features?.join(', ') || ''}
+                        className="w-full border p-2 rounded"
+                        placeholder="Comma separated: Feature 1, Feature 2, Feature 3"
+                    />
+                </div>
             </div>
 
             <div>

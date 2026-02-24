@@ -2,6 +2,7 @@
 import { PrismaClient } from '@prisma/client';
 import { forumTopics } from '../src/data/forum';
 import { events } from '../src/data/events';
+import { tools } from '../src/data/tools';
 
 const prisma = new PrismaClient();
 
@@ -61,6 +62,27 @@ async function main() {
                 },
             });
             console.log(`Created event: ${event.title}`);
+        }
+    }
+
+    // Seed Tools
+    for (const tool of tools) {
+        const existingTool = await prisma.tool.findUnique({
+            where: { slug: tool.slug },
+        });
+
+        if (!existingTool) {
+            await prisma.tool.create({
+                data: {
+                    slug: tool.slug,
+                    title: tool.name,
+                    category: tool.category,
+                    description: tool.description,
+                    imageUrl: tool.logo || '',
+                    url: tool.website,
+                },
+            });
+            console.log(`Created tool: ${tool.name}`);
         }
     }
 

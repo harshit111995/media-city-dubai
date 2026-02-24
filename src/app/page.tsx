@@ -52,11 +52,6 @@ export default async function Home() {
             Connect, discover tools, and attend world-class events.
           </p>
 
-          <div className={styles.ctaGroup}>
-            <Link href="/forum" className="btn-primary">
-              Join the Community
-            </Link>
-          </div>
         </div>
       </section>
 

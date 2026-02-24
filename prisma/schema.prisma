@@ -56,6 +56,8 @@ model Tool {
   url              String
   category         String   // e.g., "AI Tools", "AdTech"
   imageUrl         String?
+  pricing          String?
+  features         String[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

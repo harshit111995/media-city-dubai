@@ -65,7 +65,7 @@ export default async function ToolCategoryPage({ params }: { params: Promise<{ c
 
             <div className={styles.grid}>
                 {categoryTools.map((tool: { slug: string, id: string, imageUrl: string | null, title: string, category: string, description: string }) => (
-                    <Link href={`/tools/${tool.slug}`} key={tool.id} className={styles.card}>
+                    <Link href={`/tools/${tool.slug}`} key={tool.id} className={`${styles.card} group`}>
                         <div className={styles.cardHeader}>
                             <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent overflow-hidden relative">
                                 {tool.imageUrl ? (
@@ -81,6 +81,7 @@ export default async function ToolCategoryPage({ params }: { params: Promise<{ c
                         <p className={styles.shortDesc}>{tool.description.substring(0, 80)}...</p>
 
                         <div className={styles.cardFooter}>
+                            <span className="text-sm font-medium text-gray-400 group-hover:text-accent transition-colors">View Details</span>
                             <ArrowRight className="text-accent" size={20} />
                         </div>
                     </Link>

@@ -147,3 +147,34 @@
     color: var(--color-text-main);
     font-size: 1.05rem;
 }
+
+.postContent p {
+    margin-bottom: 1.5rem;
+}
+
+.postContent h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-main, #111);
+    line-height: 1.2;
+}
+
+.postContent h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-main, #222);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.postContent h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+}

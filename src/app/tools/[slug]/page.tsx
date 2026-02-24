@@ -81,6 +81,20 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                     <p className="text-lg leading-relaxed text-gray-200 mb-8">
                         {tool.description}
                     </p>
+
+                    {tool.features && tool.features.length > 0 && (
+                        <div className="mt-12">
+                            <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-white/10">Key Features</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {tool.features.map((feature: string, index: number) => (
+                                    <div key={index} className="flex items-start gap-3 glass-panel p-4 rounded-lg">
+                                        <div className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
+                                        <span className="text-gray-200">{feature}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </main>
 
                 <aside className={styles.sidebar}>
@@ -88,6 +102,15 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                         <h3 className="text-lg font-bold mb-4 border-b border-white/10 pb-2">At a Glance</h3>
 
                         <div className="space-y-4">
+                            {tool.pricing && (
+                                <div className="mb-4">
+                                    <span className="block text-sm text-gray-400 mb-1">Pricing Model</span>
+                                    <div className="inline-block px-3 py-1 rounded bg-white/5 border border-white/10 font-medium">
+                                        {tool.pricing}
+                                    </div>
+                                </div>
+                            )}
+
                             <div>
                                 <span className="block text-sm text-gray-400">Website</span>
                                 <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-accent hover:underline break-all">

@@ -223,6 +223,9 @@ export async function createTool(formData: FormData) {
     const description = formData.get('description') as string;
     const url = formData.get('url') as string;
     const category = formData.get('category') as string; // AI Tools, AdTech, MarTech
+    const pricing = formData.get('pricing') as string;
+    const featuresRaw = formData.get('features') as string;
+    const features = featuresRaw ? featuresRaw.split(',').map(f => f.trim()).filter(Boolean) : [];
 
     const imageUrlFile = formData.get('imageUrl');
     let imageUrl = '';
@@ -245,6 +248,8 @@ export async function createTool(formData: FormData) {
             url,
             category,
             imageUrl,
+            pricing,
+            features,
         },
     });
 
@@ -259,6 +264,9 @@ export async function updateTool(id: string, formData: FormData) {
     const description = formData.get('description') as string;
     const url = formData.get('url') as string;
     const category = formData.get('category') as string;
+    const pricing = formData.get('pricing') as string;
+    const featuresRaw = formData.get('features') as string;
+    const features = featuresRaw ? featuresRaw.split(',').map(f => f.trim()).filter(Boolean) : [];
 
     const imageUrlFile = formData.get('imageUrl');
     let imageUrl = undefined;
@@ -281,6 +289,8 @@ export async function updateTool(id: string, formData: FormData) {
             description,
             url,
             category,
+            pricing,
+            features,
             ...(imageUrl && { imageUrl }),
         },
     });

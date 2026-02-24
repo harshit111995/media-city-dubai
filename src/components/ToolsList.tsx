@@ -102,6 +102,11 @@ export default function ToolsList({ tools }: ToolsListProps) {
 
                         <h2 className={styles.cardTitle}>{tool.title}</h2>
                         <p className={styles.shortDesc}>{tool.description.substring(0, 80)}...</p>
+
+                        <div className={styles.cardFooter}>
+                            <span className="text-sm font-medium text-gray-400 group-hover:text-accent transition-colors">View Details</span>
+                            <ChevronRight className="text-accent" size={20} />
+                        </div>
                     </Link>
                 ))}
             </div>
