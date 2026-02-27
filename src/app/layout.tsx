@@ -14,6 +14,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://mediacitydubai.com'),
   title: 'Media City Dubai',
   description: 'The premier hub for media, adtech, and events in Dubai.',
 };

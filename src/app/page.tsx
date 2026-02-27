@@ -3,6 +3,13 @@ import { Sparkles, Calendar, MessageSquare, Wrench, Newspaper } from 'lucide-rea
 import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://mediacitydubai.com',
+  },
+};
 
 export const dynamic = 'force-dynamic';
 
