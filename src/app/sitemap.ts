@@ -5,13 +5,10 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    // Dynamically retrieve the exact domain the user is accessing this sitemap from.
-    // This perfectly solves Google's "url is not allowed" error by ensuring 
-    // the sitemap URLs always 100% match the Search Console property domain.
-    const headersList = await headers();
-    const domain = headersList.get('host') || 'media-city-dubai.vercel.app';
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const baseUrl = `${protocol}://${domain}`;
+    // Force the exact canonical domain to prevent www/non-www duplicate indexation issues
+    const baseUrl = process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3000'
+        : 'https://mediacitydubai.com';
 
     const posts = await prisma.post.findMany({ select: { slug: true, updatedAt: true } });
     const events = await prisma.event.findMany({ select: { slug: true, updatedAt: true } });

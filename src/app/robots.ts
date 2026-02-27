@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/admin/'], // Hide internal CMS pages from search engines
         },
-        sitemap: 'https://media-city-dubai.vercel.app/sitemap.xml',
+        sitemap: 'https://mediacitydubai.com/sitemap.xml',
     };
 }
