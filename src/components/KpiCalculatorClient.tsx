@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import nerdamer from 'nerdamer/all.min';
-import { Sparkles, MessageSquareCode, Calculator, Terminal, RotateCCW } from 'lucide-react';
+import { Sparkles, MessageSquareCode, Calculator, Terminal, RotateCcw } from 'lucide-react';
 
 interface KpiField {
     name: string;
@@ -277,8 +277,8 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         <button
                             onClick={() => setInputMode('standard')}
                             className={`flex items-center space-x-2 px-6 py-3 rounded-xl text-xs font-medium transition-all duration-300 active:scale-95 ${inputMode === 'standard'
-                                    ? 'bg-white/10 text-white shadow-md'
-                                    : 'text-slate-500 hover:text-slate-300'
+                                ? 'bg-white/10 text-white shadow-md'
+                                : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             <Calculator className="w-4 h-4" />
@@ -287,8 +287,8 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         <button
                             onClick={() => setInputMode('nlp')}
                             className={`flex items-center space-x-2 px-6 py-3 rounded-xl text-xs font-medium transition-all duration-300 active:scale-95 ${inputMode === 'nlp'
-                                    ? 'bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
-                                    : 'text-slate-500 hover:text-slate-300'
+                                ? 'bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
+                                : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             <MessageSquareCode className="w-4 h-4" />
@@ -334,8 +334,8 @@ export default function KpiCalculatorClient({ title, formula, description, field
                                         setInputs(newInputs);
                                     }}
                                     className={`px-5 py-3 rounded-[1.5rem] text-xs font-medium transition-all duration-300 active:scale-95 ${targetVariable === field.name
-                                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
-                                            : 'bg-black/40 text-slate-400 border border-white/5 hover:bg-black/60 hover:text-white hover:border-white/20'
+                                        ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                                        : 'bg-black/40 text-slate-400 border border-white/5 hover:bg-black/60 hover:text-white hover:border-white/20'
                                         }`}
                                 >
                                     Solve: {field.label}
@@ -378,7 +378,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
                                         onClick={() => setInputs({})}
                                         className="flex items-center space-x-2 text-rose-400/80 hover:text-rose-400 hover:bg-rose-950/30 px-4 py-2 rounded-full text-xs font-medium transition-all active:scale-95"
                                     >
-                                        <RotateCCW className="w-3 h-3" />
+                                        <RotateCcw className="w-3 h-3" />
                                         <span>Clear Matrix</span>
                                     </button>
                                 </div>
