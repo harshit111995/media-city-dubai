@@ -39,22 +39,11 @@ export default async function KpiDetailPage({ params }: { params: Promise<{ slug
                 <ArrowLeft size={16} className="mr-2" />
                 Back to Calculators
             </Link>
-
-            <div className="glass-panel p-8 md:p-12 rounded-2xl mb-8">
-                <span className="text-sm font-semibold text-accent uppercase tracking-wider mb-3 block">{kpi.category}</span>
-                <h1 className="text-4xl md:text-5xl font-bold mb-6 font-playfair text-white">{kpi.title} Calculator</h1>
-                <p className="text-lg text-gray-300 leading-relaxed mb-8">
-                    {kpi.description}
-                </p>
-
-                <div className="bg-background/80 p-5 rounded-xl border border-white/5 shadow-inner inline-block mb-10 w-full md:w-auto">
-                    <span className="text-xs uppercase tracking-wider font-semibold text-gray-400 block mb-2">Mathematical Formula</span>
-                    <code className="text-xl font-mono text-accent">{kpi.title} = {kpi.formula}</code>
-                </div>
-
+            <div className="mb-8">
                 <KpiCalculatorClient
                     title={kpi.title}
                     formula={kpi.formula}
+                    description={kpi.description}
                     fields={parsedFields}
                 />
             </div>

@@ -11,16 +11,14 @@ interface KpiField {
 interface KpiCalculatorClientProps {
     title: string;
     formula: string;
+    description: string;
     fields: KpiField[];
 }
 
-export default function KpiCalculatorClient({ title, formula, fields }: KpiCalculatorClientProps) {
-    // Store user inputs by field name
+export default function KpiCalculatorClient({ title, formula, description, fields }: KpiCalculatorClientProps) {
     const [inputs, setInputs] = useState<Record<string, number>>({});
-    // Preferred currency
     const [currencyCode, setCurrencyCode] = useState('USD');
 
-    // Handle input change
     const handleInputChange = (name: string, value: string) => {
         setInputs(prev => ({
             ...prev,
@@ -28,24 +26,17 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
         }));
     };
 
-    // Evaluate formula safely
     const result = useMemo(() => {
         try {
-            // Check if all fields have some value
             const hasAllInputs = fields.every(f => typeof inputs[f.name] !== 'undefined');
             if (!hasAllInputs) return null;
 
-            // Create a function with parameters based on field names
             const paramNames = fields.map(f => f.name);
             const paramValues = fields.map(f => inputs[f.name] || 0);
 
-            // Note: In real production systems, consider a mathematical parser (e.g., mathjs) 
-            // to avoid Function constructor, but since the formula is strictly controlled by 
-            // our CMS and not user input, this is a clean approach.
             const evaluator = new Function(...paramNames, `return (${formula});`);
             const val = evaluator(...paramValues);
 
-            // Check for NaN or Infinity (e.g. divide by zero)
             if (isNaN(val) || !isFinite(val)) return 0;
             return val;
         } catch (error) {
@@ -66,75 +57,85 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
     const hasCurrencyField = fields.some(f => f.type === 'currency');
 
     return (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6 relative overflow-hidden">
-            <div className="flex flex-col md:flex-row gap-8">
-                {/* Inputs Section */}
-                <div className="flex-1 space-y-4">
-                    <div className="flex justify-between items-end mb-4">
-                        <h3 className="text-xl font-bold text-white">Enter Metrics</h3>
+        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
 
-                        {hasCurrencyField && (
-                            <div className="flex items-center gap-2">
-                                <label className="text-sm text-gray-400">Currency:</label>
-                                <select
-                                    className="bg-background border border-white/20 rounded-md p-2 text-sm text-white focus:outline-none focus:border-accent"
-                                    value={currencyCode}
-                                    onChange={(e) => setCurrencyCode(e.target.value)}
-                                >
-                                    <option value="USD">USD ($)</option>
-                                    <option value="AED">AED (د.إ)</option>
-                                    <option value="EUR">EUR (€)</option>
-                                    <option value="GBP">GBP (£)</option>
-                                    <option value="INR">INR (₹)</option>
-                                </select>
-                            </div>
-                        )}
-                    </div>
+            {/* Left Column: Context & Formula */}
+            <div className="flex-1 p-6 md:p-8 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between">
+                <div>
+                    <h3 className="text-2xl font-bold text-white mb-2">{title} Calculator</h3>
+                    <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                        {description}
+                    </p>
+                </div>
 
+                <div className="bg-black/30 p-4 rounded-lg border border-white/5">
+                    <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400 block mb-1">Mathematical Formula</span>
+                    <code className="text-sm font-mono text-accent break-all">{title} = {formula}</code>
+                </div>
+            </div>
+
+            {/* Middle Column: Interactive Inputs */}
+            <div className="flex-1 p-6 border-b md:border-b-0 md:border-r border-white/10">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Metrics</h3>
+
+                    {hasCurrencyField && (
+                        <div className="flex items-center gap-2">
+                            <select
+                                className="bg-background border border-white/20 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-accent"
+                                value={currencyCode}
+                                onChange={(e) => setCurrencyCode(e.target.value)}
+                            >
+                                <option value="USD">USD ($)</option>
+                                <option value="AED">AED (د.إ)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="INR">INR (₹)</option>
+                            </select>
+                        </div>
+                    )}
+                </div>
+
+                <div className="space-y-4">
                     {fields.map(field => (
                         <div key={field.name}>
-                            <label className="block text-sm font-medium mb-1 text-gray-300">
+                            <label className="block text-xs font-medium mb-1 text-gray-400">
                                 {field.label} {field.type === 'percentage' ? '(%)' : ''}
                             </label>
                             <div className="relative">
                                 {field.type === 'currency' && (
-                                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none text-lg">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 pointer-events-none text-sm">
                                         {currencyCode === 'USD' ? '$' : currencyCode === 'EUR' ? '€' : currencyCode === 'GBP' ? '£' : currencyCode === 'INR' ? '₹' : 'د.إ'}
                                     </span>
                                 )}
                                 <input
                                     type="number"
-                                    className={`w-full bg-background border border-white/20 p-4 rounded-lg text-white font-medium focus:outline-none focus:border-accent transition-colors ${field.type === 'currency' ? 'pl-10' : ''}`}
+                                    className={`w-full bg-background border border-white/20 py-2 px-3 rounded text-white text-sm font-medium focus:outline-none focus:border-accent transition-colors ${field.type === 'currency' ? 'pl-8' : ''}`}
                                     placeholder="0"
                                     value={inputs[field.name] === undefined ? '' : inputs[field.name]}
                                     onChange={(e) => handleInputChange(field.name, e.target.value)}
                                 />
                                 {field.type === 'percentage' && (
-                                    <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 font-medium">%</span>
+                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-sm font-medium">%</span>
                                 )}
                             </div>
                         </div>
                     ))}
                 </div>
+            </div>
 
-                {/* Result Section */}
-                <div className="flex-1 bg-gradient-to-br from-accent/20 to-transparent border border-accent/30 rounded-xl p-8 flex flex-col justify-center items-center text-center shadow-inner">
-                    <span className="text-gray-300 mb-3 font-medium uppercase tracking-widest text-sm">Estimated {title}</span>
-                    <div className="text-6xl font-black text-white leading-tight">
-                        {result !== null ? (
-                            // Determine output formatting heuristically based on formula or default to raw
-                            // E.g., Return on Ad spend is a ratio. Cost per lead is currency.
-                            title.toLowerCase().includes('cost') || title.toLowerCase().includes('value') || title.toLowerCase().includes('revenue')
-                                ? formatValue(result, 'currency')
-                                : title.toLowerCase().includes('rate') || title.toLowerCase().includes('margin')
-                                    ? formatValue(result * 100, 'percentage')
-                                    : formatValue(result, 'number')
-                        ) : (
-                            <span className="text-white/20">--</span>
-                        )}
-                    </div>
-                    {result !== null && (
-                        <span className="text-xs font-semibold text-accent mt-6 bg-accent/10 border border-accent/20 px-4 py-1.5 rounded-full">Results Calculated Automatically</span>
+            {/* Right Column: Result */}
+            <div className="flex-1 bg-gradient-to-br from-accent/20 to-transparent p-6 md:p-8 flex flex-col justify-center items-center text-center">
+                <span className="text-gray-300 mb-2 font-medium uppercase tracking-widest text-xs">Estimated Result</span>
+                <div className="text-4xl md:text-5xl font-black text-white leading-tight break-words max-w-full">
+                    {result !== null ? (
+                        title.toLowerCase().includes('cost') || title.toLowerCase().includes('value') || title.toLowerCase().includes('revenue') || title.toLowerCase().includes('spend') || title.toLowerCase().includes('ltv') || title.toLowerCase().includes('cpa') || title.toLowerCase().includes('cpc') || title.toLowerCase().includes('cpm')
+                            ? formatValue(result, 'currency')
+                            : title.toLowerCase().includes('rate') || title.toLowerCase().includes('margin') || title.toLowerCase().includes('roi') || title.toLowerCase().includes('%')
+                                ? formatValue(result * 100, 'percentage')
+                                : formatValue(result, 'number')
+                    ) : (
+                        <span className="text-white/20">--</span>
                     )}
                 </div>
             </div>
