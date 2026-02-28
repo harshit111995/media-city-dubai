@@ -32,35 +32,37 @@ export default function KpiDirectoryClient({ initialKpis }: { initialKpis: KpiLi
                 Measure what matters. Browse our collection of 30+ interactive calculators to easily compute essential metrics for Marketing, Sales, and E-Commerce.
             </p>
 
-            <div className="max-w-xl mx-auto mb-12 relative">
+            <div className="max-w-md mx-auto mb-16 relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-500" />
+                    <Search className="h-4 w-4 text-gray-500" />
                 </div>
                 <input
                     type="text"
-                    className="w-full bg-white/5 border border-white/20 pl-12 pr-4 py-4 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-accent transition-colors shadow-lg"
-                    placeholder="Search calculators (e.g., ROAS, Conversion, CPC)..."
+                    className="w-full bg-black/20 backdrop-blur-md border border-white/10 pl-10 pr-4 py-3 rounded-full text-sm text-white placeholder-gray-500 focus:outline-none focus:border-accent/50 focus:bg-white/5 transition-all shadow-[0_0_15px_rgba(255,255,255,0.02)]"
+                    placeholder="Search calculators (e.g. ROAS, CPC)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {filteredKpis.map((kpi) => (
-                    <Link href={`/kpi/${kpi.slug}`} key={kpi.id} className="glass-panel p-6 rounded-xl hover:border-accent/50 transition-colors flex flex-col h-full border border-white/10 group">
-                        <span className="text-[10px] font-bold text-accent uppercase tracking-widest mb-3 bg-accent/10 px-2 py-1 rounded inline-block w-fit">{kpi.category}</span>
-                        <h2 className="text-xl font-bold text-white mb-2 group-hover:text-accent transition-colors">{kpi.title}</h2>
+                    <Link href={`/kpi/${kpi.slug}`} key={kpi.id} className="bg-white/[0.02] p-6 rounded-2xl hover:bg-white/5 border border-white/5 hover:border-accent/30 transition-all flex flex-col h-full group relative overflow-hidden shadow-lg">
 
-                        {kpi.formula && (
-                            <code className="text-xs font-mono text-gray-400 mb-3 block truncate bg-black/20 px-2 py-1 rounded">
-                                {kpi.formula}
-                            </code>
-                        )}
+                        {/* Subtle background glow effect on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-                        <p className="text-sm text-gray-300 flex-grow leading-relaxed">{kpi.description}</p>
+                        <div className="relative z-10 flex flex-col h-full">
+                            <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-3 block">{kpi.category}</span>
+                            <h2 className="text-xl font-bold text-white mb-2 group-hover:text-accent transition-colors">{kpi.title}</h2>
 
-                        <div className="mt-6 pt-4 border-t border-white/10 text-accent font-medium text-sm flex items-center justify-between opacity-80 group-hover:opacity-100 transition-opacity">
-                            Calculate Now <span className="transform group-hover:translate-x-1 transition-transform">&rarr;</span>
+                            {kpi.formula && (
+                                <code className="text-[10px] font-mono text-accent/70 bg-accent/5 px-2 py-1 rounded w-fit mb-3 border border-accent/10 whitespace-nowrap overflow-hidden text-ellipsis max-w-full block">
+                                    {kpi.title} = {kpi.formula}
+                                </code>
+                            )}
+
+                            <p className="text-xs text-gray-400 flex-grow leading-relaxed line-clamp-2">{kpi.description}</p>
                         </div>
                     </Link>
                 ))}
