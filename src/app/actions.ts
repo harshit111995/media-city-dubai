@@ -308,3 +308,70 @@ export async function deleteTool(id: string) {
     revalidatePath('/admin');
     revalidatePath('/tools');
 }
+
+// KPI Actions
+export async function createKpi(formData: FormData) {
+    const title = formData.get('title') as string;
+    const slug = formData.get('slug') as string;
+    const description = formData.get('description') as string;
+    const formula = formData.get('formula') as string;
+    const fields = formData.get('fields') as string;
+    const category = formData.get('category') as string;
+    const seoTitle = formData.get('seoTitle') as string;
+    const seoDescription = formData.get('seoDescription') as string;
+
+    await prisma.kpi.create({
+        data: {
+            title,
+            slug,
+            description,
+            formula,
+            fields,
+            category,
+            seoTitle,
+            seoDescription,
+        },
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/kpi');
+    redirect('/admin');
+}
+
+export async function updateKpi(id: string, formData: FormData) {
+    const title = formData.get('title') as string;
+    const slug = formData.get('slug') as string;
+    const description = formData.get('description') as string;
+    const formula = formData.get('formula') as string;
+    const fields = formData.get('fields') as string;
+    const category = formData.get('category') as string;
+    const seoTitle = formData.get('seoTitle') as string;
+    const seoDescription = formData.get('seoDescription') as string;
+
+    await prisma.kpi.update({
+        where: { id },
+        data: {
+            title,
+            slug,
+            description,
+            formula,
+            fields,
+            category,
+            seoTitle,
+            seoDescription,
+        },
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/kpi');
+    redirect('/admin');
+}
+
+export async function deleteKpi(id: string) {
+    await prisma.kpi.delete({
+        where: { id },
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/kpi');
+}

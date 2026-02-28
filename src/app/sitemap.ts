@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const posts = await prisma.post.findMany({ select: { slug: true, updatedAt: true } });
     const events = await prisma.event.findMany({ select: { slug: true, updatedAt: true } });
     const tools = await prisma.tool.findMany({ select: { slug: true, updatedAt: true } });
+    const kpis = await prisma.kpi.findMany({ select: { slug: true, updatedAt: true } });
 
     const postCategories = await prisma.post.findMany({ distinct: ['category'], select: { category: true } });
     const toolCategories = await prisma.tool.findMany({ distinct: ['category'], select: { category: true } });
@@ -32,6 +33,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: tool.updatedAt,
     }));
 
+    const kpiUrls = kpis.map((kpi: { slug: string, updatedAt: Date }) => ({
+        url: `${baseUrl}/kpi/${kpi.slug}`,
+        lastModified: kpi.updatedAt,
+    }));
+
     const postCategoryUrls = postCategories.map((c: { category: string }) => ({
         url: `${baseUrl}/forum/category/${encodeURIComponent(c.category)}`,
         lastModified: new Date(),
@@ -48,9 +54,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${baseUrl}/tools`, lastModified: new Date() },
         { url: `${baseUrl}/forum`, lastModified: new Date() },
         { url: `${baseUrl}/about`, lastModified: new Date() },
+        { url: `${baseUrl}/kpi`, lastModified: new Date() },
         ...postUrls,
         ...eventUrls,
         ...toolUrls,
+        ...kpiUrls,
         ...postCategoryUrls,
         ...toolCategoryUrls,
     ];

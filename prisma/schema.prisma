@@ -61,3 +61,17 @@ model Tool {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
+model Kpi {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  description      String
+  formula          String   // String representation of the formula
+  fields           String   // JSON string defining required inputs (name, label, type)
+  seoTitle         String?
+  seoDescription   String?
+  category         String   // E.g., "Marketing", "Finance"
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

@@ -5,17 +5,18 @@ import styles from '@/styles/admin.module.css';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-    const [posts, events, tools] = await Promise.all([
+    const [posts, events, tools, kpis] = await Promise.all([
         prisma.post.findMany({ orderBy: { createdAt: 'desc' } }),
         prisma.event.findMany({ orderBy: { createdAt: 'desc' } }),
-        prisma.tool.findMany({ orderBy: { createdAt: 'desc' } })
+        prisma.tool.findMany({ orderBy: { createdAt: 'desc' } }),
+        prisma.kpi.findMany({ orderBy: { createdAt: 'desc' } })
     ]);
 
     return (
         <div className="container mx-auto p-8">
             <h1 className="text-3xl font-bold mb-8">CMS Dashboard</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {/* Posts Section */}
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex justify-between items-center mb-4">
@@ -91,6 +92,32 @@ export default async function AdminDashboard() {
                             </div>
                         ))}
                         {tools.length === 0 && <p className="text-gray-500">No tools found.</p>}
+                    </div>
+                </div>
+
+                {/* KPI Calculators Section */}
+                <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">KPI Calculators</h2>
+                        <Link href="/admin/kpi/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Create KPI
+                        </Link>
+                    </div>
+                    <div className="space-y-4">
+                        {kpis.map((kpi) => (
+                            <div key={kpi.id} className="border-b pb-2 flex justify-between items-center">
+                                <div>
+                                    <h3 className="font-medium">{kpi.title}</h3>
+                                    <span className="text-sm text-gray-500">{kpi.category}</span>
+                                </div>
+                                <div className="space-x-2">
+                                    <Link href={`/admin/kpi/${kpi.id}`} className="text-blue-600 hover:underline">
+                                        Edit
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                        {kpis.length === 0 && <p className="text-gray-500">No KPIs found.</p>}
                     </div>
                 </div>
             </div>
