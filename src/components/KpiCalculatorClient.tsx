@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { Target } from 'lucide-react';
+import { useState, useMemo } from 'react';
 import nerdamer from 'nerdamer/all.min';
 
 interface KpiField {
@@ -18,15 +17,8 @@ interface KpiCalculatorClientProps {
 }
 
 export default function KpiCalculatorClient({ title, formula, description, fields }: KpiCalculatorClientProps) {
-    // Determine the "result" variable name. E.g. "cpm = ..." the result is "cpm".
-    // Since formulas in our DB are just the right side (e.g. "(spend/impressions)*1000"),
-    // we assume the "result" name is the title's acronym/slug. 
-    // We will inject a fake field for the Result itself so it becomes part of the equation.
-
-    // Convert formula like "(spend/impressions)*1000" into a full equation: "result_var = (spend/impressions)*1000"
     const resultVarName = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-    // Create an array of ALL variables in the equation (the user inputs + the final result metric)
     const allVariables: KpiField[] = [
         ...fields,
         {
@@ -36,14 +28,10 @@ export default function KpiCalculatorClient({ title, formula, description, field
         }
     ];
 
-    // By default, we solve for the main KPI result
     const [targetVariable, setTargetVariable] = useState<string>(resultVarName);
-
-    // Store all raw input strings (allows empty strings while typing)
     const [inputs, setInputs] = useState<Record<string, string>>({});
     const [currencyCode, setCurrencyCode] = useState('USD');
 
-    // Safe full equation string for algebraic parsing
     const fullEquation = `${resultVarName} = ${formula}`;
 
     const handleInputChange = (name: string, value: string) => {
@@ -53,39 +41,29 @@ export default function KpiCalculatorClient({ title, formula, description, field
         }));
     };
 
-    // The core bi-directional solver effect
     const calculatedValue = useMemo(() => {
         try {
-            // Check if all OTHER variables are filled out
             const requiredVars = allVariables.filter(v => v.name !== targetVariable);
             const hasAllRequired = requiredVars.every(v => inputs[v.name] && inputs[v.name] !== '');
 
             if (!hasAllRequired) return null;
 
-            // Build the known values map for Nerdamer
             const knowns: Record<string, number> = {};
             requiredVars.forEach(v => {
                 let val = parseFloat(inputs[v.name] || '0');
-                if (v.type === 'percentage') val = val / 100; // normalize percentages for math
+                if (v.type === 'percentage') val = val / 100;
                 knowns[v.name] = val;
             });
 
-            // Nerdamer solves the equation algebraically for the target variable
-            // E.g. solveEquations("cpm = (spend/impressions)*1000", "spend")
             const solution = nerdamer.solveEquations(fullEquation, targetVariable);
 
-            // If there's a valid solution expression, evaluate it with the known variables
             if (solution && solution.length > 0) {
                 const solutionExpression = solution[0].toString();
                 let evaluated = nerdamer(solutionExpression).evaluate(knowns).text();
-
-                // Sometimes it returns fractions as strings like "10000/3". Parse it.
-                let finalNum = eval(evaluated); // eval is safe here as it's purely numerical output from nerdamer
+                let finalNum = eval(evaluated);
 
                 if (isNaN(finalNum) || !isFinite(finalNum)) return null;
 
-                // If the target variable we solved for is expected to be a percentage, 
-                // multiply by 100 because the user will see it formatted as a %
                 const targetFieldInfo = allVariables.find(v => v.name === targetVariable);
                 if (targetFieldInfo?.type === 'percentage') {
                     finalNum = finalNum * 100;
@@ -101,100 +79,124 @@ export default function KpiCalculatorClient({ title, formula, description, field
         }
     }, [inputs, targetVariable, fullEquation, allVariables]);
 
+    const formatCurrencySymbol = () => {
+        switch (currencyCode) {
+            case 'USD': return '$';
+            case 'EUR': return '€';
+            case 'GBP': return '£';
+            case 'INR': return '₹';
+            case 'AED': return 'د.إ';
+            default: return '$';
+        }
+    };
+
+    const targetField = allVariables.find(v => v.name === targetVariable);
+    const inputFields = allVariables.filter(v => v.name !== targetVariable);
+
+    const formattedCalculatedValue = () => {
+        if (calculatedValue === null) return '--';
+        if (targetField?.type === 'currency') {
+            return `${formatCurrencySymbol()}${calculatedValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+        if (targetField?.type === 'percentage') {
+            return `${calculatedValue.toFixed(2)}%`;
+        }
+        return calculatedValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    };
 
     return (
-        <div className="bg-background/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl max-w-3xl mx-auto w-full mb-16 relative">
+        <div className="max-w-4xl mx-auto w-full mb-20 bg-[#0f0f0f] border border-gray-800 rounded-none p-8 md:p-12">
 
-            {/* Elegant Top Header */}
-            <div className="px-8 py-6 border-b border-white/5 bg-white/[0.02]">
-                <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-2xl font-bold text-white tracking-tight">{title} Calculator</h3>
-                    {allVariables.some(f => f.type === 'currency') && (
-                        <select
-                            className="bg-transparent border border-white/10 rounded-full px-3 py-1 text-xs text-gray-300 focus:outline-none focus:border-accent/50 cursor-pointer hover:bg-white/5 transition-colors"
-                            value={currencyCode}
-                            onChange={(e) => setCurrencyCode(e.target.value)}
-                        >
-                            <option value="USD">USD ($)</option>
-                            <option value="AED">AED (د.إ)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="INR">INR (₹)</option>
-                        </select>
-                    )}
+            {/* Header & Description */}
+            <div className="mb-12 border-b border-gray-800 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div>
+                    <h3 className="text-3xl font-black text-white tracking-tight mb-3 uppercase">{title}</h3>
+                    <p className="text-gray-500 text-sm max-w-xl font-light leading-relaxed">
+                        {description}
+                    </p>
                 </div>
-                <p className="text-gray-400 text-sm leading-relaxed max-w-2xl">
-                    {description}
-                </p>
-                <code className="mt-4 block text-[11px] uppercase tracking-widest font-mono text-accent/70 bg-accent/5 px-2 py-1 rounded w-fit border border-accent/10">
-                    {fullEquation}
-                </code>
+
+                {allVariables.some(f => f.type === 'currency') && (
+                    <select
+                        className="bg-transparent border border-gray-700 text-gray-400 text-xs px-3 py-2 uppercase tracking-widest focus:outline-none focus:border-white transition-colors cursor-pointer appearance-none rounded-none"
+                        value={currencyCode}
+                        onChange={(e) => setCurrencyCode(e.target.value)}
+                    >
+                        <option value="USD">USD ($)</option>
+                        <option value="AED">AED (د.إ)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="INR">INR (₹)</option>
+                    </select>
+                )}
             </div>
 
-            {/* Bi-Directional Input Section */}
-            <div className="p-8 space-y-6">
-                <div className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-6 flex items-center justify-between">
-                    <span>Enter Known Metrics</span>
-                    <span className="flex items-center text-accent/70 bg-accent/10 px-2 py-1 rounded-full"><Target size={12} className="mr-1" /> Select Target to Solve</span>
-                </div>
-
-                {allVariables.map((field) => {
-                    const isTarget = targetVariable === field.name;
-                    // Format the calculated result nicely if this is the target
-                    let displayValue = inputs[field.name] || '';
-                    if (isTarget && calculatedValue !== null) {
-                        displayValue = calculatedValue.toFixed(2);
-                    }
-
-                    return (
-                        <div
+            {/* Target Variable Selector (Segmented Control) */}
+            <div className="mb-10">
+                <span className="block text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4">What do you want to calculate?</span>
+                <div className="flex flex-wrap gap-2">
+                    {allVariables.map(field => (
+                        <button
                             key={field.name}
-                            className={`relative flex items-center rounded-xl border transition-all duration-300 overflow-hidden ${isTarget ? 'border-accent bg-accent/5 shadow-[0_0_15px_rgba(var(--accent-rgb),0.2)]' : 'border-white/10 bg-white/[0.02] hover:bg-white/5 hover:border-white/20'}`}
+                            onClick={() => {
+                                setTargetVariable(field.name);
+                                setInputs(prev => ({ ...prev, [field.name]: '' }));
+                            }}
+                            className={`px-5 py-3 text-xs uppercase tracking-widest font-bold transition-all border ${targetVariable === field.name
+                                    ? 'bg-white text-black border-white'
+                                    : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-400'
+                                }`}
                         >
-                            {/* Solve-For Radio Toggle Engine */}
-                            <button
-                                onClick={() => {
-                                    setTargetVariable(field.name);
-                                    // Clear the input of the newly selected target so it can be overwritten by the calculation
-                                    setInputs(prev => ({ ...prev, [field.name]: '' }));
-                                }}
-                                className={`flex-shrink-0 w-16 h-full absolute left-0 top-0 bottom-0 flex items-center justify-center border-r transition-colors duration-300 z-10 ${isTarget ? 'border-accent/30 bg-accent/10 text-accent' : 'border-white/5 text-gray-600 hover:text-gray-400 hover:bg-white/5'}`}
-                                title={`Solve for ${field.label}`}
-                            >
-                                <Target size={18} className={isTarget ? 'animate-pulse' : ''} />
-                            </button>
+                            {field.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
-                            {/* Minimalist Floating Label Input */}
-                            <div className="flex-grow pl-20 pr-4 py-3 relative">
-                                <label className={`block text-[10px] uppercase tracking-wider font-bold mb-1 transition-colors ${isTarget ? 'text-accent' : 'text-gray-500'}`}>
-                                    {field.label} {isTarget ? '(Solving...)' : ''}
-                                </label>
+            {/* MASSIVE Result Display for the Target Variable */}
+            <div className="bg-[#151515] border border-gray-800 p-8 md:p-12 mb-10 flex flex-col items-center justify-center text-center">
+                <span className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-4">{targetField?.label} (Result)</span>
+                <div className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter break-words max-w-full">
+                    {formattedCalculatedValue()}
+                </div>
+            </div>
 
-                                <div className="flex items-center">
-                                    {field.type === 'currency' && (
-                                        <span className={`text-lg font-medium mr-1 ${isTarget ? 'text-accent' : 'text-gray-400'}`}>
-                                            {currencyCode === 'USD' ? '$' : currencyCode === 'EUR' ? '€' : currencyCode === 'GBP' ? '£' : currencyCode === 'INR' ? '₹' : 'د.إ'}
-                                        </span>
-                                    )}
+            {/* Stark Input Variables */}
+            <div>
+                <span className="block text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-6 border-b border-gray-800 pb-2">Known Variables</span>
+                <div className="space-y-6">
+                    {inputFields.map((field) => (
+                        <div key={field.name} className="flex flex-col sm:flex-row sm:items-center border-b border-gray-800 pb-4 group">
+                            <label className="text-sm font-bold text-gray-400 uppercase tracking-wider sm:w-1/3 mb-2 sm:mb-0 transition-colors group-hover:text-gray-300">
+                                {field.label}
+                            </label>
 
-                                    <input
-                                        type="number"
-                                        readOnly={isTarget}
-                                        className={`w-full bg-transparent border-none p-0 text-2xl font-semibold outline-none transition-colors ${isTarget ? 'text-white' : 'text-gray-200 placeholder-gray-700'}`}
-                                        placeholder={isTarget ? '0.00' : 'Enter value...'}
-                                        value={displayValue}
-                                        onChange={(e) => handleInputChange(field.name, e.target.value)}
-                                        style={{ WebkitAppearance: 'none', margin: 0 }}
-                                    />
+                            <div className="sm:w-2/3 flex items-center relative">
+                                {field.type === 'currency' && (
+                                    <span className="text-xl font-medium text-gray-500 mr-2 absolute left-0">
+                                        {formatCurrencySymbol()}
+                                    </span>
+                                )}
 
-                                    {field.type === 'percentage' && (
-                                        <span className={`text-lg font-medium ml-1 ${isTarget ? 'text-accent' : 'text-gray-400'}`}>%</span>
-                                    )}
-                                </div>
+                                <input
+                                    type="number"
+                                    className={`w-full bg-transparent border-none text-2xl md:text-3xl font-bold text-white placeholder-gray-800 focus:outline-none focus:ring-0 ${field.type === 'currency' ? 'pl-8' : ''}`}
+                                    placeholder="0"
+                                    value={inputs[field.name] || ''}
+                                    onChange={(e) => handleInputChange(field.name, e.target.value)}
+                                    style={{ WebkitAppearance: 'none', margin: 0 }}
+                                />
+
+                                {field.type === 'percentage' && (
+                                    <span className="text-xl font-medium text-gray-500 ml-2 absolute right-0">%</span>
+                                )}
                             </div>
                         </div>
-                    );
-                })}
+                    ))}
+                </div>
+                <div className="mt-8 text-right">
+                    <code className="text-[10px] uppercase font-mono text-gray-600 block">formula: {fullEquation}</code>
+                </div>
             </div>
 
         </div>
