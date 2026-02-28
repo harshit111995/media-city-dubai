@@ -29,6 +29,7 @@ export default function Header() {
                         <Link href="/events" className={styles.navLink}>Events</Link>
                         <Link href="/tools" className={styles.navLink}>Tools</Link>
                         <Link href="/forum" className={styles.navLink}>Forum</Link>
+                        <Link href="/kpi" className={styles.navLink}>KPIs</Link>
                         <Link href="/about" className={styles.navLink}>About</Link>
 
                         <form action="/search" className={styles.searchForm}>
@@ -55,6 +56,7 @@ export default function Header() {
                             <Link href="/events" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Events</Link>
                             <Link href="/tools" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Tools</Link>
                             <Link href="/forum" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>Forum</Link>
+                            <Link href="/kpi" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>KPIs</Link>
                             <Link href="/about" className={styles.mobileLink} onClick={() => setIsMobileMenuOpen(false)}>About</Link>
                             <form action="/search" className={styles.searchForm}>
                                 <input
