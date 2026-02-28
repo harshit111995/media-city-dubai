@@ -242,7 +242,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
 
     return (
-        <div className="lunar-bg font-sans min-h-screen pt-12 pb-24 relative overflow-hidden text-white">
+        <div className="lunar-bg font-sans min-h-screen pt-12 pb-24 relative overflow-hidden text-gray-900">
             {/* Deep Radial Background is now handled by .lunar-bg directly */}
 
             <div className="max-w-4xl mx-auto w-full relative z-10 px-4">
@@ -251,15 +251,15 @@ export default function KpiCalculatorClient({ title, formula, description, field
                 <div className="lunar-shell p-6 md:p-14 relative overflow-hidden">
 
                     {/* Header line */}
-                    <div className="flex justify-between items-center mb-10 pb-6 border-b border-white/10">
+                    <div className="flex justify-between items-center mb-10 pb-6 border-b border-gray-200">
                         <div className="flex items-center space-x-3">
-                            <Terminal className="w-5 h-5 lunar-text-blue" />
-                            <h3 className="text-xl md:text-2xl font-light lunar-text-white tracking-widest uppercase">{title} Solver</h3>
+                            <Terminal className="w-5 h-5 text-red-600" />
+                            <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-widest uppercase">{title} Solver</h3>
                         </div>
 
                         {allVariables.some(f => f.type === 'currency') && (
                             <select
-                                className="bg-black/40 border border-white/10 text-ghost-white text-xs px-4 py-2 rounded-full uppercase tracking-widest focus:outline-none focus:border-blue-500/50 hover:bg-black/60 transition-colors cursor-pointer appearance-none text-white shadow-inner active:scale-95"
+                                className="bg-white border border-gray-200 text-gray-700 text-xs px-4 py-2 rounded-full uppercase tracking-widest focus:outline-none focus:border-red-500 hover:bg-gray-50 transition-colors cursor-pointer appearance-none shadow-sm active:scale-95"
                                 value={currencyCode}
                                 onChange={(e) => setCurrencyCode(e.target.value)}
                             >
@@ -273,12 +273,12 @@ export default function KpiCalculatorClient({ title, formula, description, field
                     </div>
 
                     {/* Mode Toggles */}
-                    <div className="flex space-x-2 mb-10 bg-black/40 p-1.5 rounded-2xl w-fit mx-auto border border-white/5 shadow-inner">
+                    <div className="flex space-x-2 mb-10 bg-gray-100 p-1.5 rounded-2xl w-fit mx-auto border border-gray-200 shadow-inner">
                         <button
                             onClick={() => setInputMode('standard')}
                             className={`flex items-center space-x-2 px-6 py-3 rounded-xl text-xs font-medium transition-all duration-300 active:scale-95 ${inputMode === 'standard'
-                                ? 'bg-white/10 text-white shadow-md'
-                                : 'text-slate-500 hover:text-slate-300'
+                                ? 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <Calculator className="w-4 h-4" />
@@ -287,8 +287,8 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         <button
                             onClick={() => setInputMode('nlp')}
                             className={`flex items-center space-x-2 px-6 py-3 rounded-xl text-xs font-medium transition-all duration-300 active:scale-95 ${inputMode === 'nlp'
-                                ? 'bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
-                                : 'text-slate-500 hover:text-slate-300'
+                                ? 'bg-red-50 text-red-700 shadow-sm border border-red-100'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <MessageSquareCode className="w-4 h-4" />
@@ -298,7 +298,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
                     {/* The Brain: Display */}
                     <div className="mb-14 text-center">
-                        <div className="text-slate-500 font-mono text-xs tracking-widest mb-4 h-6 opacity-70 flex justify-center items-center">
+                        <div className="text-gray-500 font-mono text-xs tracking-widest mb-4 h-6 opacity-70 flex justify-center items-center">
                             {liveEquationTrace}
                         </div>
 
@@ -309,7 +309,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
                             {/* Pulsing Caret */}
                             <div className="lunar-caret" />
                         </div>
-                        <div className="text-blue-300/60 font-medium tracking-widest uppercase text-xs mt-6 flex justify-center items-center space-x-2">
+                        <div className="text-red-500 font-medium tracking-widest uppercase text-xs mt-6 flex justify-center items-center space-x-2">
                             <Sparkles className="w-3 h-3" />
                             <span>Target Logic: {targetField?.label}</span>
                         </div>
@@ -355,17 +355,17 @@ export default function KpiCalculatorClient({ title, formula, description, field
                                             {field.label}
                                         </label>
                                         <div className="flex items-center relative z-10">
-                                            {field.type === 'currency' && <span className="text-white/40 mr-1 font-medium text-lg">{formatCurrencySymbol()}</span>}
+                                            {field.type === 'currency' && <span className="text-gray-400 mr-1 font-medium text-lg">{formatCurrencySymbol()}</span>}
                                             <input
                                                 type="number"
-                                                className="w-full bg-transparent border-none text-xl md:text-2xl font-medium lunar-text-white placeholder-slate-700 outline-none p-0 focus:ring-0"
+                                                className="w-full bg-transparent border-none text-xl md:text-2xl font-bold text-gray-900 placeholder-gray-400 outline-none p-0 focus:ring-0"
                                                 placeholder="0"
                                                 value={inputs[field.name] || ''}
                                                 onChange={(e) => handleInputChange(field.name, e.target.value)}
                                                 onFocus={() => setActiveInput(field.name)}
                                                 onBlur={() => setActiveInput(null)}
                                             />
-                                            {field.type === 'percentage' && <span className="text-white/40 ml-1 font-medium text-lg">%</span>}
+                                            {field.type === 'percentage' && <span className="text-gray-400 ml-1 font-medium text-lg">%</span>}
                                         </div>
                                     </div>
                                 ))}
@@ -383,14 +383,14 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         ) : (
                             <div className="lunar-textarea p-6">
                                 <textarea
-                                    className="w-full bg-transparent lunar-text-white font-light text-lg lg:text-xl md:leading-relaxed resize-none outline-none placeholder-slate-600 min-h-[120px]"
+                                    className="w-full bg-transparent text-gray-900 font-medium text-lg lg:text-xl md:leading-relaxed resize-none outline-none placeholder-gray-400 min-h-[120px]"
                                     placeholder="e.g., 'We spent $5,000 on ads and generated 1,000,000 impressions...'"
                                     value={nlpString}
                                     onChange={(e) => setNlpString(e.target.value)}
                                 />
-                                <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-xs">
-                                    <span className="text-blue-400/80 flex items-center"><Sparkles className="w-3 h-3 mr-1" /> Auto-mapping active</span>
-                                    <span className="text-slate-500">Variables detected: {Object.values(inputs).filter(v => v !== '').length}</span>
+                                <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center text-xs font-semibold">
+                                    <span className="text-red-500 flex items-center"><Sparkles className="w-3 h-3 mr-1" /> Auto-mapping active</span>
+                                    <span className="text-gray-500">Variables detected: {Object.values(inputs).filter(v => v !== '').length}</span>
                                 </div>
                             </div>
                         )}
@@ -398,10 +398,10 @@ export default function KpiCalculatorClient({ title, formula, description, field
                     </div>
 
                     {/* Smart Suggestions: "Magic Bar" */}
-                    <div className="mt-14 pt-6 border-t border-white/10 text-center">
-                        <div className="px-6 py-4 bg-white/5 rounded-2xl border border-white/5 inline-block text-sm lunar-text-slate font-light shadow-inner max-w-full">
+                    <div className="mt-14 pt-6 text-center">
+                        <div className="px-6 py-4 bg-gray-50 rounded-2xl border border-gray-200 inline-block text-sm text-gray-600 font-medium shadow-sm max-w-full">
                             <span className="flex items-center justify-center break-words whitespace-normal leading-relaxed text-center px-2">
-                                <Sparkles className="w-4 h-4 lunar-text-blue mr-2 flex-shrink-0" />
+                                <Sparkles className="w-4 h-4 text-red-500 mr-2 flex-shrink-0" />
                                 <span>{magicSentence}</span>
                             </span>
                         </div>

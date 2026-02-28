@@ -33,26 +33,28 @@ export default function KpiDirectoryClient({ initialKpis }: { initialKpis: KpiLi
             <div className="container mx-auto px-4 relative z-10 max-w-7xl">
 
                 <div className="text-center mb-16">
-                    <div className="inline-flex items-center justify-center space-x-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full mb-6">
-                        <Sparkles className="w-4 h-4 text-blue-400" />
-                        <span className="text-xs font-medium text-blue-300 uppercase tracking-widest">AI-Powered Math Matrix</span>
+                    <div className="inline-flex items-center justify-center space-x-2 bg-red-500/10 border border-red-500/20 px-4 py-1.5 rounded-full mb-6">
+                        <Sparkles className="w-4 h-4 text-red-500" />
+                        <span className="text-xs font-medium text-red-600 uppercase tracking-widest">AI-Powered Math Matrix</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-light mb-6 lunar-text-white tracking-tight">Business Intelligence</h1>
-                    <p className="lunar-text-slate text-lg max-w-xl mx-auto font-light leading-relaxed">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900 tracking-tight">Business Intelligence</h1>
+                    <p className="text-gray-600 text-lg max-w-xl mx-auto font-medium leading-relaxed">
                         Specify inputs with natural language or standard fields. Our bi-directional solver maps the exact formula you need.
                     </p>
                 </div>
 
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 lunar-text-slate group-focus-within:text-red-500 transition-colors" />
+                <div className="mb-16 relative max-w-2xl mx-auto group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Search className="h-5 w-5 text-gray-400 group-focus-within:text-red-500 transition-colors" />
+                    </div>
+                    <input
+                        type="text"
+                        className="w-full bg-white border border-gray-200 pl-12 pr-4 py-4 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 hover:border-gray-300 transition-all duration-200 text-base shadow-sm"
+                        placeholder="Search formulas (e.g. ROAS)..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
-                <input
-                    type="text"
-                    className="w-full bg-[#111] border border-white/10 pl-12 pr-4 py-4 rounded-xl lunar-text-white placeholder-slate-600 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-all duration-200 text-base"
-                    placeholder="Search formulas (e.g. ROAS)..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -61,15 +63,15 @@ export default function KpiDirectoryClient({ initialKpis }: { initialKpis: KpiLi
                         <div className="h-full p-6 lunar-card flex flex-col active:scale-95 cursor-pointer">
 
                             <div className="flex justify-between items-start mb-4">
-                                <span className="text-[10px] font-medium lunar-text-slate uppercase tracking-widest bg-black/40 px-3 py-1.5 rounded-md">{kpi.category}</span>
-                                <Sparkles className="w-4 h-4 lunar-text-slate group-hover:text-red-500 transition-colors" />
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest bg-gray-100 px-3 py-1.5 rounded-md">{kpi.category}</span>
+                                <Sparkles className="w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors" />
                             </div>
 
-                            <h2 className="text-xl font-medium lunar-text-white mb-3 group-hover:text-red-50 transition-colors tracking-tight">{kpi.title}</h2>
-                            <p className="text-sm lunar-text-slate flex-grow leading-relaxed font-light line-clamp-3">{kpi.description}</p>
+                            <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors tracking-tight">{kpi.title}</h2>
+                            <p className="text-sm text-gray-600 flex-grow leading-relaxed font-medium line-clamp-3">{kpi.description}</p>
 
                             {kpi.formula && (
-                                <div className="mt-6 pt-4 border-t border-white/5 text-[10px] font-mono lunar-text-slate truncate opacity-50 group-hover:opacity-100 transition-opacity">
+                                <div className="mt-6 pt-4 border-t border-gray-100 text-[10px] font-mono text-gray-500 truncate opacity-50 group-hover:opacity-100 transition-opacity">
                                     equation: {kpi.formula}
                                 </div>
                             )}
