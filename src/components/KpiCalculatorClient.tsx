@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import nerdamer from 'nerdamer/all.min';
 import { Sparkles, MessageSquareCode, Calculator, Terminal, RotateCcw } from 'lucide-react';
+import '@/styles/kpi.css';
 
 interface KpiField {
     name: string;
@@ -20,7 +21,7 @@ interface KpiCalculatorClientProps {
 // Fluid Number Counter Animation Component
 const AnimatedNumber = ({ value, formatFn }: { value: number | null, formatFn: (val: number | null) => string }) => {
     const [displayValue, setDisplayValue] = useState<number>(0);
-    const animationRef = useRef<number>();
+    const animationRef = useRef<number>(0);
     const startValueRef = useRef<number>(0);
     const startTimeRef = useRef<number | null>(null);
 
@@ -241,20 +242,19 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
 
     return (
-        <div className="bg-slate-950 font-sans min-h-screen pt-12 pb-24 relative overflow-hidden">
-            {/* Deep Radial Background */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950 z-0 pointer-events-none" />
+        <div className="lunar-bg font-sans min-h-screen pt-12 pb-24 relative overflow-hidden text-white">
+            {/* Deep Radial Background is now handled by .lunar-bg directly */}
 
             <div className="max-w-4xl mx-auto w-full relative z-10 px-4">
 
                 {/* The Shell: Glassmorphism Calculator Container */}
-                <div className="bg-white/5 backdrop-blur-[20px] border border-white/10 rounded-[2.5rem] p-6 md:p-14 shadow-2xl relative overflow-hidden">
+                <div className="lunar-shell p-6 md:p-14 relative overflow-hidden">
 
                     {/* Header line */}
                     <div className="flex justify-between items-center mb-10 pb-6 border-b border-white/10">
                         <div className="flex items-center space-x-3">
-                            <Terminal className="w-5 h-5 text-blue-400" />
-                            <h3 className="text-xl md:text-2xl font-light text-white tracking-widest uppercase">{title} Solver</h3>
+                            <Terminal className="w-5 h-5 lunar-text-blue" />
+                            <h3 className="text-xl md:text-2xl font-light lunar-text-white tracking-widest uppercase">{title} Solver</h3>
                         </div>
 
                         {allVariables.some(f => f.type === 'currency') && (
@@ -303,11 +303,11 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         </div>
 
                         <div className="relative inline-flex items-center justify-center">
-                            <div className="text-6xl md:text-8xl lg:text-[7rem] font-light text-white tracking-tighter drop-shadow-lg leading-none">
+                            <div className="lunar-massive-text">
                                 <AnimatedNumber value={calculatedValue} formatFn={formatter} />
                             </div>
                             {/* Pulsing Caret */}
-                            <div className="animate-pulse h-16 md:h-24 ml-2 border-r-[3px] border-blue-400 opacity-60 rounded-full" />
+                            <div className="lunar-caret" />
                         </div>
                         <div className="text-blue-300/60 font-medium tracking-widest uppercase text-xs mt-6 flex justify-center items-center space-x-2">
                             <Sparkles className="w-3 h-3" />
@@ -322,7 +322,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         {!targetVariable && (
                             <div className="text-center text-rose-400 text-sm py-4">Please select a target variable below to solve.</div>
                         )}
-                        <div className="flex flex-wrap justify-center gap-3 mb-8">
+                        <div className="flex flex-wrap justify-center gap-2 mb-8">
                             {allVariables.map(field => (
                                 <button
                                     key={`sel-${field.name}`}
@@ -333,9 +333,9 @@ export default function KpiCalculatorClient({ title, formula, description, field
                                         delete newInputs[field.name];
                                         setInputs(newInputs);
                                     }}
-                                    className={`px-5 py-3 rounded-[1.5rem] text-xs font-medium transition-all duration-300 active:scale-95 ${targetVariable === field.name
-                                        ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
-                                        : 'bg-black/40 text-slate-400 border border-white/5 hover:bg-black/60 hover:text-white hover:border-white/20'
+                                    className={`px-4 py-2 rounded-xl text-xs font-medium cursor-pointer transition-all duration-200 active:scale-95 ${targetVariable === field.name
+                                        ? 'lunar-pill-active'
+                                        : 'lunar-pill-inactive'
                                         }`}
                                 >
                                     Solve: {field.label}
@@ -345,48 +345,45 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
                         {/* Input Fields */}
                         {inputMode === 'standard' ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {inputFields.map((field) => (
                                     <div
                                         key={`in-${field.name}`}
-                                        className={`bg-black/40 border active:scale-[0.98] transition-all duration-300 rounded-[2rem] p-5 flex flex-col justify-center relative group overflow-hidden ${activeInput === field.name ? 'border-blue-500/50 shadow-[0_0_25px_rgba(59,130,246,0.15)] bg-blue-950/20' : 'border-white/10 hover:border-white/30'}`}
+                                        className={`lunar-input-container p-4 flex flex-col justify-center relative group overflow-hidden ${activeInput === field.name ? 'lunar-input-active' : ''}`}
                                     >
-                                        <label className="text-xs font-medium text-slate-400 uppercase tracking-widest mb-3 whitespace-nowrap overflow-hidden text-ellipsis z-10">
+                                        <label className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-1 whitespace-nowrap overflow-hidden text-ellipsis z-10">
                                             {field.label}
                                         </label>
                                         <div className="flex items-center relative z-10">
-                                            {field.type === 'currency' && <span className="text-white/40 mr-2 font-light text-xl">{formatCurrencySymbol()}</span>}
+                                            {field.type === 'currency' && <span className="text-white/40 mr-1 font-medium text-lg">{formatCurrencySymbol()}</span>}
                                             <input
                                                 type="number"
-                                                className="w-full bg-transparent border-none text-2xl font-light text-white placeholder-slate-700 outline-none p-0 focus:ring-0"
-                                                placeholder="0.00"
+                                                className="w-full bg-transparent border-none text-xl md:text-2xl font-medium lunar-text-white placeholder-slate-700 outline-none p-0 focus:ring-0"
+                                                placeholder="0"
                                                 value={inputs[field.name] || ''}
                                                 onChange={(e) => handleInputChange(field.name, e.target.value)}
                                                 onFocus={() => setActiveInput(field.name)}
                                                 onBlur={() => setActiveInput(null)}
                                             />
-                                            {field.type === 'percentage' && <span className="text-white/40 ml-2 font-light text-xl">%</span>}
+                                            {field.type === 'percentage' && <span className="text-white/40 ml-1 font-medium text-lg">%</span>}
                                         </div>
-
-                                        {/* Subtle background glow element for focus state */}
-                                        <div className={`absolute inset-0 bg-blue-500/5 opacity-0 transition-opacity duration-300 pointer-events-none ${activeInput === field.name ? 'opacity-100' : ''}`} />
                                     </div>
                                 ))}
 
-                                <div className="md:col-span-2 flex justify-end mt-2">
+                                <div className="col-span-2 md:col-span-3 flex justify-end mt-2">
                                     <button
                                         onClick={() => setInputs({})}
-                                        className="flex items-center space-x-2 text-rose-400/80 hover:text-rose-400 hover:bg-rose-950/30 px-4 py-2 rounded-full text-xs font-medium transition-all active:scale-95"
+                                        className="flex items-center space-x-2 lunar-text-rose hover:bg-rose-950/30 px-4 py-2 rounded-lg text-xs font-medium transition-all active:scale-95"
                                     >
                                         <RotateCcw className="w-3 h-3" />
-                                        <span>Clear Matrix</span>
+                                        <span>AC (Clear All)</span>
                                     </button>
                                 </div>
                             </div>
                         ) : (
-                            <div className="bg-black/50 border border-white/10 focus-within:border-blue-500/50 focus-within:shadow-[0_0_30px_rgba(59,130,246,0.2)] transition-all duration-500 rounded-[2rem] p-6">
+                            <div className="lunar-textarea p-6">
                                 <textarea
-                                    className="w-full bg-transparent text-white font-light text-lg lg:text-xl md:leading-relaxed resize-none outline-none placeholder-slate-600 min-h-[120px]"
+                                    className="w-full bg-transparent lunar-text-white font-light text-lg lg:text-xl md:leading-relaxed resize-none outline-none placeholder-slate-600 min-h-[120px]"
                                     placeholder="e.g., 'We spent $5,000 on ads and generated 1,000,000 impressions...'"
                                     value={nlpString}
                                     onChange={(e) => setNlpString(e.target.value)}
@@ -402,9 +399,9 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
                     {/* Smart Suggestions: "Magic Bar" */}
                     <div className="mt-14 pt-6 border-t border-white/10 text-center">
-                        <div className="px-6 py-4 bg-white/5 rounded-2xl border border-white/5 inline-block text-sm text-slate-300 font-light shadow-inner max-w-full">
+                        <div className="px-6 py-4 bg-white/5 rounded-2xl border border-white/5 inline-block text-sm lunar-text-slate font-light shadow-inner max-w-full">
                             <span className="flex items-center justify-center break-words whitespace-normal leading-relaxed text-center px-2">
-                                <Sparkles className="w-4 h-4 text-blue-400 mr-2 flex-shrink-0" />
+                                <Sparkles className="w-4 h-4 lunar-text-blue mr-2 flex-shrink-0" />
                                 <span>{magicSentence}</span>
                             </span>
                         </div>

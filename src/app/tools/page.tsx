@@ -53,6 +53,10 @@ export default async function ToolsPage() {
                 </p>
 
                 <div className="flex gap-4 justify-center mt-6 flex-wrap">
+                    <Link href="/kpi" className="px-5 py-2 rounded-full border border-red-500/30 bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:border-red-500/50 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.1)] flex items-center space-x-2 relative group overflow-hidden">
+                        <span className="relative z-10 font-medium">KPI Calculators</span>
+                        <div className="absolute inset-0 bg-red-500/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-full z-0"></div>
+                    </Link>
                     <Link href="/tools/category/AdTech" className="px-4 py-2 rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors">AdTech</Link>
                     <Link href="/tools/category/MarTech" className="px-4 py-2 rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors">MarTech</Link>
                     <Link href="/tools/category/AI%20Tools" className="px-4 py-2 rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors">AI Tools</Link>
