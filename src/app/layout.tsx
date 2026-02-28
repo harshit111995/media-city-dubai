@@ -27,6 +27,22 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable}`}>
       <head>
+        {/* Organization Schema.org JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Media City Dubai',
+              url: 'https://mediacitydubai.com',
+              logo: 'https://mediacitydubai.com/images/forum-minimalist.png', // Fallback logo representation
+              sameAs: [
+                'https://mediacitydubai.com'
+              ],
+            }),
+          }}
+        />
         {/* Google tag (gtag.js) */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWJ5DJJ873"></script>
         <script dangerouslySetInnerHTML={{

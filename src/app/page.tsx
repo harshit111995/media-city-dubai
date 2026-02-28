@@ -42,6 +42,24 @@ export default async function Home() {
 
   return (
     <main>
+      {/* WebSite Schema.org JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Media City Dubai',
+            url: 'https://mediacitydubai.com',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://mediacitydubai.com/search?q={search_term_string}',
+              'query-input': 'required name=search_term_string'
+            }
+          }),
+        }}
+      />
+
       {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
