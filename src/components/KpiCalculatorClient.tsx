@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import nerdamer from 'nerdamer/all.min';
-import { Sparkles, MessageSquareCode, Calculator, Terminal, RotateCcw } from 'lucide-react';
+import { Sparkles, MessageSquareCode, Calculator, Terminal, RotateCcw, CheckCircle2 } from 'lucide-react';
 import '@/styles/kpi.css';
 
 interface KpiField {
@@ -273,23 +273,17 @@ export default function KpiCalculatorClient({ title, formula, description, field
                     </div>
 
                     {/* Mode Toggles */}
-                    <div className="flex mb-10 bg-gray-100/80 backdrop-blur-sm p-1.5 rounded-full w-fit mx-auto border border-gray-200/50 shadow-inner">
+                    <div className="kpi-toggle-container">
                         <button
                             onClick={() => setInputMode('standard')}
-                            className={`flex items-center space-x-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 ${inputMode === 'standard'
-                                ? 'bg-white text-gray-900 shadow-sm border border-gray-100'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
-                                }`}
+                            className={`kpi-toggle-btn ${inputMode === 'standard' ? 'active' : ''}`}
                         >
                             <Calculator className="w-4 h-4" />
                             <span>Structured Matrix</span>
                         </button>
                         <button
                             onClick={() => setInputMode('nlp')}
-                            className={`flex items-center space-x-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 ${inputMode === 'nlp'
-                                ? 'bg-white text-gray-900 shadow-sm border border-gray-100'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
-                                }`}
+                            className={`kpi-toggle-btn ${inputMode === 'nlp' ? 'active' : ''}`}
                         >
                             <MessageSquareCode className="w-4 h-4" />
                             <span>Natural Language</span>
@@ -322,25 +316,26 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         {!targetVariable && (
                             <div className="text-center text-rose-400 text-sm py-4">Please select a target variable below to solve.</div>
                         )}
-                        <div className="flex flex-wrap justify-center gap-3 mb-8">
-                            {allVariables.map(field => (
-                                <button
-                                    key={`sel-${field.name}`}
-                                    onClick={() => {
-                                        setTargetVariable(field.name);
-                                        // Clear current input for new target if needed, but keeping others helps reverse flow
-                                        const newInputs = { ...inputs };
-                                        delete newInputs[field.name];
-                                        setInputs(newInputs);
-                                    }}
-                                    className={`px-5 py-2.5 rounded-full text-[13px] font-medium cursor-pointer transition-all duration-200 active:scale-95 border ${targetVariable === field.name
-                                        ? 'bg-red-50 text-red-600 border-red-200 shadow-sm'
-                                        : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:border-gray-300 hover:text-gray-900'
-                                        }`}
-                                >
-                                    Solve: {field.label}
-                                </button>
-                            ))}
+                        <div className="kpi-pills-container">
+                            {allVariables.map(field => {
+                                const isActive = targetVariable === field.name;
+                                return (
+                                    <button
+                                        key={`sel-${field.name}`}
+                                        onClick={() => {
+                                            setTargetVariable(field.name);
+                                            // Clear current input for new target
+                                            const newInputs = { ...inputs };
+                                            delete newInputs[field.name];
+                                            setInputs(newInputs);
+                                        }}
+                                        className={`kpi-logic-pill ${isActive ? 'active' : ''}`}
+                                    >
+                                        {isActive && <CheckCircle2 className="w-4 h-4 text-white/90" />}
+                                        <span>Solve: {field.label}</span>
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         {/* Input Fields */}
