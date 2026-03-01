@@ -39,21 +39,8 @@ export default function KpiDirectoryClient({ initialKpis }: { initialKpis: KpiLi
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900 tracking-tight">Business Intelligence</h1>
                     <p className="text-gray-600 text-lg max-w-xl mx-auto font-medium leading-relaxed">
-                        Specify inputs with natural language or standard fields. Our bi-directional solver maps the exact formula you need.
+                        Specify inputs with standard fields. Our bi-directional solver maps the exact formula you need.
                     </p>
-                </div>
-
-                <div className="mb-16 relative max-w-2xl mx-auto group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Search className="h-5 w-5 text-gray-400 group-focus-within:text-red-500 transition-colors" />
-                    </div>
-                    <input
-                        type="text"
-                        className="w-full bg-white border border-gray-200 pl-12 pr-4 py-4 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 hover:border-gray-300 transition-all duration-200 text-base shadow-sm"
-                        placeholder="Search formulas (e.g. ROAS)..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
                 </div>
             </div>
 
