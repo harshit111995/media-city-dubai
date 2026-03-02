@@ -368,7 +368,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
                                 <div className="col-span-2 md:col-span-3 flex justify-end mt-2">
                                     <button
                                         onClick={() => setInputs({})}
-                                        className="flex items-center space-x-2 lunar-text-rose hover:bg-rose-950/30 px-4 py-2 rounded-lg text-xs font-medium transition-all active:scale-95"
+                                        className="kpi-clear-btn"
                                     >
                                         <RotateCcw className="w-3 h-3" />
                                         <span>AC (Clear All)</span>
