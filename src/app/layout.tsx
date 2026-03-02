@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import Script from 'next/script';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import '@/styles/globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${montserrat.variable}`}>
-      <head>
+      <body>
         {/* Organization Schema.org JSON-LD */}
         <script
           type="application/ld+json"
@@ -43,33 +43,6 @@ export default function RootLayout({
             }),
           }}
         />
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-TWJ5DJJ873"></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-TWJ5DJJ873');
-          `
-        }} />
-        {/* Google Tag Manager */}
-        <script dangerouslySetInnerHTML={{
-          __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-NHN56LC7');`}} />
-        {/* End Google Tag Manager */}
-        {/* Google AdSense Script (Manual Placement in Head) */}
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4468459107811853" crossOrigin="anonymous"></script>
-      </head>
-      <body>
-        {/* Google Tag Manager (noscript) */}
-        <noscript dangerouslySetInnerHTML={{
-          __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NHN56LC7"
-height="0" width="0" style="display:none;visibility:hidden"></iframe>`}} />
-        {/* End Google Tag Manager (noscript) */}
         <Header />
         <main className="min-h-screen" style={{ paddingTop: '100px' }}>
           {/* Force padding-top since Tailwind is missing */}
@@ -80,6 +53,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}} />
 
         {/* Google Tracking Scripts */}
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+        <GoogleTagManager gtmId="GTM-NHN56LC7" />
+
+        {/* Google AdSense Script */}
+        <Script
+          id="google-adsense"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4468459107811853"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
 
         {/* Microsoft Clarity Script */}
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
