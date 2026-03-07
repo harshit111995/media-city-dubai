@@ -71,11 +71,19 @@ export default function KpiCalculatorClient({ title, formula, description, field
     const isLikelyPercentage = title.toLowerCase().includes('rate') || title.toLowerCase().includes('margin') || title.toLowerCase().includes('roi') || title.toLowerCase().includes('%') || formula.includes('* 100') || formula.includes('/ 100');
 
     const allVariables: KpiField[] = [
-        ...fields,
+        ...fields.map(f => {
+            if (f.type !== 'currency') {
+                const l = f.label.toLowerCase();
+                if (l.includes('cost') || l.includes('value') || l.includes('revenue') || l.includes('spend') || l.includes('ltv') || l.includes('cpa') || l.includes('cpc') || l.includes('cpm') || l.includes('cac')) {
+                    return { ...f, type: 'currency' };
+                }
+            }
+            return f;
+        }),
         {
             name: resultVarName,
             label: title,
-            type: title.toLowerCase().includes('cost') || title.toLowerCase().includes('value') || title.toLowerCase().includes('revenue') || title.toLowerCase().includes('spend') || title.toLowerCase().includes('ltv') || title.toLowerCase().includes('cpa') || title.toLowerCase().includes('cpc') || title.toLowerCase().includes('cpm') ? 'currency' : isLikelyPercentage ? 'percentage' : 'number'
+            type: title.toLowerCase().includes('cost') || title.toLowerCase().includes('value') || title.toLowerCase().includes('revenue') || title.toLowerCase().includes('spend') || title.toLowerCase().includes('ltv') || title.toLowerCase().includes('cpa') || title.toLowerCase().includes('cpc') || title.toLowerCase().includes('cpm') || title.toLowerCase().includes('cac') ? 'currency' : isLikelyPercentage ? 'percentage' : 'number'
         }
     ];
 
