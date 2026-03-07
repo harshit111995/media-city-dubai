@@ -1,0 +1,132 @@
+.planner-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--color-border);
+}
+
+.planner-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.planner-table th {
+    background-color: #f9fafb;
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+    border-bottom: 2px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.planner-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-main);
+    vertical-align: middle;
+}
+
+.planner-table tr:last-child td {
+    border-bottom: none;
+}
+
+.planner-table tr:hover td {
+    background-color: #fdfdfd;
+}
+
+.planner-input {
+    width: 100%;
+    min-width: 80px;
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background-color: white;
+    font-size: 0.875rem;
+    color: var(--color-text-main);
+    transition: all 0.2s ease;
+    text-align: right;
+}
+
+.planner-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+.planner-input.locked {
+    background-color: #f3f4f6;
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    border-color: transparent;
+}
+
+.planner-input-currency {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.planner-input-currency span {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--color-text-muted);
+    pointer-events: none;
+}
+
+.planner-input-currency input {
+    padding-left: 1.5rem;
+}
+
+.planner-input-percentage {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.planner-input-percentage span {
+    position: absolute;
+    right: 0.75rem;
+    color: var(--color-text-muted);
+    pointer-events: none;
+}
+
+.planner-input-percentage input {
+    padding-right: 1.5rem;
+}
+
+.planner-summary-row td {
+    background-color: #f9fafb;
+    font-weight: 700;
+    border-top: 2px solid var(--color-border);
+}
+
+.metric-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-card-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.metric-card-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
