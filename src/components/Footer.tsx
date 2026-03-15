@@ -23,6 +23,8 @@ export default function Footer() {
                         <ul className={styles.links}>
                             <li><Link href="/events">Events Calendar</Link></li>
                             <li><Link href="/tools">Tools Directory</Link></li>
+                            <li><Link href="/kpi">KPI Calculators</Link></li>
+                            <li><Link href="/media-planner">Media Planner</Link></li>
                             <li><Link href="/forum">Community Forum</Link></li>
                             <li><Link href="/about">About Us</Link></li>
                         </ul>

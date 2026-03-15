@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${montserrat.variable}`}>
-      <body>
+      <body suppressHydrationWarning>
         {/* Organization Schema.org JSON-LD */}
         <script
           type="application/ld+json"
