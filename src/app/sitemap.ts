@@ -55,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${baseUrl}/forum`, lastModified: new Date() },
         { url: `${baseUrl}/about`, lastModified: new Date() },
         { url: `${baseUrl}/kpi`, lastModified: new Date() },
+        { url: `${baseUrl}/media-planner`, lastModified: new Date() },
         ...postUrls,
         ...eventUrls,
         ...toolUrls,
