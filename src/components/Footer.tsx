@@ -15,6 +15,9 @@ export default function Footer() {
                         <p className={styles.tagline}>
                             Empowering the region's media, tech, and creative professionals.
                         </p>
+                        <Link href="/media-planner" className={styles.tagline} style={{ marginTop: '0.75rem', display: 'inline-block', fontWeight: 700, color: '#dc2626', textDecoration: 'none' }}>
+                            🗂 Try our free Programmatic Media Planner →
+                        </Link>
                     </div>
 
                     {/* Quick Links */}
@@ -25,6 +28,7 @@ export default function Footer() {
                             <li><Link href="/tools">Tools Directory</Link></li>
                             <li><Link href="/kpi">KPI Calculators</Link></li>
                             <li><Link href="/media-planner">Media Planner</Link></li>
+                            <li><Link href="/media-metrics">Media Metrics Glossary</Link></li>
                             <li><Link href="/forum">Community Forum</Link></li>
                             <li><Link href="/about">About Us</Link></li>
                         </ul>
