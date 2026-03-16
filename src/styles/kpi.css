@@ -145,21 +145,22 @@
     display: flex;
     margin-bottom: 2.5rem;
     background-color: var(--color-secondary);
-    padding: 0.25rem;
-    border-radius: 0.75rem;
+    padding: 0.3rem;
+    border-radius: 9999px;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
     border: 1px solid var(--color-border);
+    gap: 0.25rem;
 }
 
 .kpi-toggle-btn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.625rem 1.5rem;
-    border-radius: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -167,17 +168,20 @@
     border: none;
     background: transparent;
     color: var(--color-text-muted);
+    white-space: nowrap;
 }
 
 .kpi-toggle-btn:hover {
     color: var(--color-text-main);
+    background-color: rgba(0,0,0,0.04);
 }
 
 .kpi-toggle-btn.active {
     background-color: white;
     color: var(--color-text-main);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
     font-weight: 600;
+    border: 1px solid var(--color-border);
 }
 
 .kpi-pills-container {
