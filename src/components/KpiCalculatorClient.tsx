@@ -433,7 +433,12 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
                     {/* Result Display */}
                     <div className="mb-14 text-center">
-                        <div className="text-gray-500 font-mono text-xs tracking-widest mb-4 h-6 opacity-70 flex justify-center items-center">
+                        {/* Read-only badge */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 border border-gray-200 mb-4">
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block' }}></span>
+                            <span className="text-[10px] font-bold tracking-widest uppercase text-gray-500">Calculated Result</span>
+                        </div>
+                        <div className="text-gray-400 font-mono text-xs tracking-widest mb-3 h-5 opacity-60 flex justify-center items-center">
                             {liveEquationTrace}
                         </div>
                         <div className="relative inline-flex items-center justify-center">
@@ -450,6 +455,13 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
                     {/* Inputs */}
                     <div className="space-y-6 max-w-2xl mx-auto">
+
+                        {/* Instruction hint */}
+                        <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-50 border border-blue-100">
+                            <span className="text-blue-500 text-sm">👇</span>
+                            <span className="text-xs font-semibold text-blue-600 tracking-wide">Select what to solve for, then enter your known values in the fields below</span>
+                        </div>
+
                         {/* Target Variable Pills */}
                         <div className="kpi-pills-container">
                             {allVariables.map(field => {
