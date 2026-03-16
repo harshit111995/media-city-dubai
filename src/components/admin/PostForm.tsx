@@ -42,7 +42,7 @@ export default function PostForm({ post }: PostFormProps) {
     };
 
     return (
-        <form action={action} className="space-y-4 bg-white p-6 rounded shadow">
+        <form action={action} encType="multipart/form-data" className="space-y-4 bg-white p-6 rounded shadow">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm font-medium mb-1">Title</label>
