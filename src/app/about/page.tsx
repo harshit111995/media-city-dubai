@@ -7,7 +7,34 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+    const baseUrl = 'https://mediacitydubai.com';
+    const jsonLd = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'AboutPage',
+            '@id': `${baseUrl}/about`,
+            url: `${baseUrl}/about`,
+            name: 'About Media City Dubai',
+            description: 'Media City Dubai is a digital platform designed to bridge the gap between creative professionals, technology providers, and industry events in the region.',
+            publisher: {
+                '@type': 'Organization',
+                name: 'Media City Dubai',
+                url: baseUrl,
+            },
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+                { '@type': 'ListItem', position: 2, name: 'About', item: `${baseUrl}/about` },
+            ],
+        },
+    ];
+
     return (
+        <>
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <div className="container py-20 max-w-4xl text-center">
             <h1 className="text-5xl font-playfair font-bold text-gradient mb-8">
                 Empowering Dubai's Media Ecosystem
@@ -32,5 +59,6 @@ export default function AboutPage() {
                 Contact Us
             </Link>
         </div>
+        </>
     );
 }

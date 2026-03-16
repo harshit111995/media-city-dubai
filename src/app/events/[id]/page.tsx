@@ -49,30 +49,46 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
         notFound();
     }
 
-    // Schema.org Event structured data
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'Event',
-        name: event.title,
-        startDate: event.date,
-        endDate: event.date, // Assuming 1-day event for simplification in mock
-        eventStatus: 'https://schema.org/EventScheduled',
-        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-        location: {
-            '@type': 'Place',
-            name: event.location,
-            address: {
-                '@type': 'PostalAddress',
-                addressLocality: 'Dubai',
-                addressCountry: 'AE',
+    const baseUrl = 'https://mediacitydubai.com';
+    const pageUrl = `${baseUrl}/events/${event.slug}`;
+
+    const jsonLd = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Event',
+            name: event.title,
+            url: pageUrl,
+            startDate: event.date.toISOString(),
+            endDate: event.date.toISOString(),
+            eventStatus: 'https://schema.org/EventScheduled',
+            eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+            location: {
+                '@type': 'Place',
+                name: event.location,
+                address: {
+                    '@type': 'PostalAddress',
+                    addressLocality: 'Dubai',
+                    addressCountry: 'AE',
+                },
+            },
+            description: event.description,
+            ...(event.headerImage && { image: [event.headerImage] }),
+            organizer: {
+                '@type': 'Organization',
+                name: event.organizer,
+                url: baseUrl,
             },
         },
-        description: event.description,
-        organizer: {
-            '@type': 'Organization',
-            name: event.organizer,
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+                { '@type': 'ListItem', position: 2, name: 'Events', item: `${baseUrl}/events` },
+                { '@type': 'ListItem', position: 3, name: event.title, item: pageUrl },
+            ],
         },
-    };
+    ];
 
     return (
         <div className={styles.detailContainer}>

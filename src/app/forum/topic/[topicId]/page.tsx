@@ -41,22 +41,58 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
 
     if (!topic) notFound();
 
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'DiscussionForumPosting',
-        headline: topic.title,
-        author: {
-            '@type': 'Person',
-            name: topic.author,
+    const baseUrl = 'https://mediacitydubai.com';
+    const pageUrl = `${baseUrl}/forum/topic/${topicId}`;
+
+    const jsonLd = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            '@id': pageUrl,
+            headline: topic.title,
+            description: topic.shortDescription || topic.content.substring(0, 160),
+            author: {
+                '@type': 'Person',
+                name: topic.author,
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'Media City Dubai',
+                url: baseUrl,
+            },
+            datePublished: topic.publishedAt.toISOString(),
+            dateModified: topic.updatedAt.toISOString(),
+            url: pageUrl,
+            ...(topic.headerImage && { image: topic.headerImage }),
+            articleSection: topic.category,
+            keywords: topic.tags || '',
         },
-        datePublished: topic.publishedAt,
-        interactionStatistic: {
-            '@type': 'InteractionCounter',
-            interactionType: 'https://schema.org/CommentAction',
-            userInteractionCount: topic.replies,
+        {
+            '@context': 'https://schema.org',
+            '@type': 'DiscussionForumPosting',
+            headline: topic.title,
+            author: {
+                '@type': 'Person',
+                name: topic.author,
+            },
+            datePublished: topic.publishedAt.toISOString(),
+            interactionStatistic: {
+                '@type': 'InteractionCounter',
+                interactionType: 'https://schema.org/CommentAction',
+                userInteractionCount: topic.replies,
+            },
+            articleBody: topic.content,
         },
-        articleBody: topic.content,
-    };
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+                { '@type': 'ListItem', position: 2, name: 'Forum', item: `${baseUrl}/forum` },
+                { '@type': 'ListItem', position: 3, name: topic.title, item: pageUrl },
+            ],
+        },
+    ];
 
     return (
         <div className={styles.threadContainer}>

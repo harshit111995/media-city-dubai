@@ -33,8 +33,46 @@ export default async function KpiDetailPage({ params }: { params: Promise<{ slug
         console.error("Failed to parse KPI fields", e);
     }
 
+    const baseUrl = 'https://mediacitydubai.com';
+    const pageUrl = `${baseUrl}/kpi/${kpi.slug}`;
+
+    const jsonLd = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebApplication',
+            name: `${kpi.title} Calculator`,
+            url: pageUrl,
+            description: kpi.description,
+            applicationCategory: 'BusinessApplication',
+            operatingSystem: 'Web',
+            offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'Media City Dubai',
+                url: baseUrl,
+            },
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+                { '@type': 'ListItem', position: 2, name: 'KPI Calculators', item: `${baseUrl}/kpi` },
+                { '@type': 'ListItem', position: 3, name: kpi.title, item: pageUrl },
+            ],
+        },
+    ];
+
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <Link href="/kpi" className="inline-flex items-center text-accent hover:underline mb-8 font-medium">
                 <ArrowLeft size={16} className="mr-2" />
                 Back to Calculators
@@ -50,3 +88,4 @@ export default async function KpiDetailPage({ params }: { params: Promise<{ slug
         </div>
     );
 }
+

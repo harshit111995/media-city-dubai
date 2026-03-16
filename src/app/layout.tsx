@@ -27,22 +27,54 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable}`}>
       <body suppressHydrationWarning>
-        {/* Organization Schema.org JSON-LD */}
+        {/* Organization + WebSite Schema — site-wide structured data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: 'Media City Dubai',
-              url: 'https://mediacitydubai.com',
-              logo: 'https://mediacitydubai.com/images/forum-minimalist.png', // Fallback logo representation
-              sameAs: [
-                'https://mediacitydubai.com'
-              ],
-            }),
+            __html: JSON.stringify([
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Organization',
+                '@id': 'https://mediacitydubai.com/#organization',
+                name: 'Media City Dubai',
+                url: 'https://mediacitydubai.com',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                  width: 512,
+                  height: 512,
+                },
+                description: 'The premier digital hub for media, adtech, and events in Dubai — connecting media professionals, creative agencies, and technology providers across the MENA region.',
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: 'Dubai',
+                  addressCountry: 'AE',
+                },
+                sameAs: [
+                  'https://mediacitydubai.com',
+                ],
+              },
+              {
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                '@id': 'https://mediacitydubai.com/#website',
+                url: 'https://mediacitydubai.com',
+                name: 'Media City Dubai',
+                description: 'The premier hub for media, adtech, and events in Dubai.',
+                publisher: { '@id': 'https://mediacitydubai.com/#organization' },
+                potentialAction: {
+                  '@type': 'SearchAction',
+                  target: {
+                    '@type': 'EntryPoint',
+                    urlTemplate: 'https://mediacitydubai.com/search?q={search_term_string}',
+                  },
+                  'query-input': 'required name=search_term_string',
+                },
+              },
+            ]),
           }}
         />
+
         <Header />
         <main className="min-h-screen" style={{ paddingTop: '100px' }}>
           {/* Force padding-top since Tailwind is missing */}

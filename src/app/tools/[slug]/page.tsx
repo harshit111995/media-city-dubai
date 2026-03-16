@@ -36,20 +36,41 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
 
     if (!tool) notFound();
 
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'SoftwareApplication',
-        name: tool.title,
-        applicationCategory: tool.category,
-        operatingSystem: 'Web',
-        description: tool.description,
-        url: tool.url,
-        offers: {
-            '@type': 'Offer',
-            price: '0',
-            priceCurrency: 'USD',
+    const baseUrl = 'https://mediacitydubai.com';
+    const pageUrl = `${baseUrl}/tools/${tool.slug}`;
+
+    const jsonLd = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: tool.title,
+            url: pageUrl,
+            applicationCategory: tool.category,
+            operatingSystem: 'Web',
+            description: tool.description,
+            ...(tool.imageUrl && { image: tool.imageUrl }),
+            offers: {
+                '@type': 'Offer',
+                price: tool.pricing?.toLowerCase().includes('free') ? '0' : undefined,
+                priceCurrency: 'USD',
+                description: tool.pricing || 'See website for pricing',
+            },
+            publisher: {
+                '@type': 'Organization',
+                name: 'Media City Dubai',
+                url: baseUrl,
+            },
         },
-    };
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+                { '@type': 'ListItem', position: 2, name: 'Tools Directory', item: `${baseUrl}/tools` },
+                { '@type': 'ListItem', position: 3, name: tool.title, item: pageUrl },
+            ],
+        },
+    ];
 
     return (
         <div className={styles.container}>
