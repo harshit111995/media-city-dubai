@@ -67,6 +67,7 @@ model Kpi {
   slug             String   @unique
   title            String
   description      String
+  example          String?  // Worked numeric example, e.g. "If spend=$1000 and impressions=200,000 → CPM = $5"
   formula          String   // String representation of the formula
   fields           String   // JSON string defining required inputs (name, label, type)
   seoTitle         String?
@@ -75,3 +76,4 @@ model Kpi {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
