@@ -5,9 +5,10 @@ import { deleteTool } from '@/app/actions';
 
 
 
-export default async function EditToolPage({ params }: { params: { id: string } }) {
+export default async function EditToolPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const tool = await prisma.tool.findUnique({
-        where: { id: params.id },
+        where: { id },
     });
 
     if (!tool) {

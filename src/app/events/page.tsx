@@ -10,14 +10,36 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
     title: 'Upcoming Media & Technology Events in Dubai | Media City Dubai',
     description: 'Discover the latest media, AdTech, and MarTech events, conferences, and workshops in Dubai. Stay ahead with our curated event calendar.',
+    alternates: {
+        canonical: '/events',
+    },
     openGraph: {
         title: 'Upcoming Media & Technology Events in Dubai',
-        description: 'Join the premier community for media professionals. Find events and networking opportunities.',
+        description: 'Join the premier community for media professionals. Find conferences, workshops, and networking workshops.',
+        url: 'https://mediacitydubai.com/events',
         siteName: 'Media City Dubai',
-        locale: 'en_AE',
+        locale: 'en_US',
         type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/events-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Media & Tech Events Dubai',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Upcoming Media & Technology Events in Dubai',
+        description: 'Your central calendar for media and tech networking in Dubai.',
+        images: ['https://mediacitydubai.com/images/events-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
     },
 };
+
+import { stripHtml, truncate } from '@/lib/utils';
 
 export default async function EventsPage() {
     const events = await prisma.event.findMany({
@@ -77,7 +99,7 @@ export default async function EventsPage() {
                         </div>
 
                         <p className={styles.cardDescription}>
-                            {event.description}
+                            {truncate(stripHtml(event.shortDescription || event.description), 120)}
                         </p>
 
                         <div className={`${styles.cardFooter} flex items-center text-accent text-sm font-medium`}>

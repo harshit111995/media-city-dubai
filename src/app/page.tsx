@@ -4,10 +4,37 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
+import { stripHtml, truncate } from '@/lib/utils';
 
 export const metadata: Metadata = {
+  title: 'Media City Dubai | AdTech, Tools & Events Hub',
+  description: 'The premier digital destination for media professionals in Dubai. Access 200+ marketing tools, 30+ KPI calculators, and the latest industry news.',
   alternates: {
     canonical: 'https://mediacitydubai.com',
+  },
+  openGraph: {
+    title: 'Media City Dubai | AdTech, Tools & Events Hub',
+    description: 'Explore the leading hub for media, adtech, and marketing in Dubai. Discover 200+ marketing tools, 30+ KPI calculators, and upcoming industry events.',
+    url: 'https://mediacitydubai.com',
+    siteName: 'Media City Dubai',
+    locale: 'en_US',
+    type: 'website',
+    images: [
+      {
+        url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+        width: 1200,
+        height: 630,
+        alt: 'Media City Dubai Hub',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Media City Dubai | AdTech & Media Hub',
+    description: 'The premier digital ecosystem for Dubai\'s media sector. Connect, discover tools, and attend world-class events.',
+    images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+    site: '@mediacitydubai',
+    creator: '@mediacitydubai',
   },
 };
 
@@ -49,8 +76,10 @@ export default async function Home() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
+            '@id': 'https://mediacitydubai.com/#website',
             name: 'Media City Dubai',
             url: 'https://mediacitydubai.com',
+            publisher: { '@id': 'https://mediacitydubai.com/#organization' },
             potentialAction: {
               '@type': 'SearchAction',
               target: 'https://mediacitydubai.com/search?q={search_term_string}',
@@ -96,7 +125,7 @@ export default async function Home() {
                   <Link href={`/forum/topic/${news.slug}`} key={news.id} className="bg-surface p-4 rounded-lg border border-white/5 hover:border-accent/50 transition-colors flex gap-4 items-center">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-lg text-white mb-1 truncate">{news.title}</h3>
-                      <p className="text-sm text-gray-400 line-clamp-2">{news.shortDescription || news.content.substring(0, 100)}</p>
+                      <p className="text-sm text-gray-400 line-clamp-2">{truncate(stripHtml(news.shortDescription || news.content), 100)}</p>
                     </div>
                   </Link>
                 ))}
@@ -217,7 +246,7 @@ export default async function Home() {
               <Link href={`/tools`} key={tool.id} className={styles.featureCard}>
                 <Wrench className={`${styles.cardIcon} w-8 h-8`} />
                 <h3 className={styles.cardTitle}>{tool.title}</h3>
-                <p className={styles.cardText}>{tool.description}</p>
+                <p className={styles.cardText}>{truncate(stripHtml(tool.description), 100)}</p>
                 <span className="text-xs text-accent mt-4 inline-block">{tool.category}</span>
               </Link>
             ))

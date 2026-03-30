@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createPost, updatePost } from '@/app/actions';
 import { Post } from '@prisma/client';
+import RichTextEditor from './RichTextEditor';
 
 interface PostFormProps {
     post?: Post;
@@ -11,6 +12,7 @@ interface PostFormProps {
 export default function PostForm({ post }: PostFormProps) {
     const action = post ? updatePost.bind(null, post.id) : createPost;
     const [preview, setPreview] = useState<string | null>(post?.headerImage || null);
+    const [content, setContent] = useState(post?.content || '');
     const [title, setTitle] = useState(post?.title || '');
     const [slug, setSlug] = useState(post?.slug || '');
     const [isAutoSlug, setIsAutoSlug] = useState(!post);
@@ -119,15 +121,15 @@ export default function PostForm({ post }: PostFormProps) {
                     <div className="flex-1">
                         <input
                             type="file"
-                            name="headerImage"
+                            name="headerImageFile"
                             accept="image/*"
                             onChange={handleImageChange}
                             className="w-full border p-2 rounded"
                         />
                         <p className="text-xs text-gray-500 mt-1">Upload an image (JPG, PNG, WebP) or check console for S3 URL after save.</p>
                         {/* Fallback for keeping existing URL if no new file selected */}
-                        {post?.headerImage && !preview?.startsWith('blob:') && (
-                            <input type="hidden" name="headerImage" value={post.headerImage} />
+                        {preview && !preview.startsWith('blob:') && (
+                            <input type="hidden" name="headerImage" value={preview} />
                         )}
                     </div>
                 </div>
@@ -144,14 +146,13 @@ export default function PostForm({ post }: PostFormProps) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium mb-1">Content</label>
-                <textarea
-                    name="content"
-                    defaultValue={post?.content}
-                    required
-                    className="w-full border p-2 rounded font-mono"
-                    rows={10}
+                <label className="block text-sm font-medium mb-1">Content (Rich Editor)</label>
+                <RichTextEditor 
+                    content={content} 
+                    onChange={setContent} 
+                    placeholder="Write your article, add headers (H1-H3), links, and styling..."
                 />
+                <input type="hidden" name="content" value={content} />
             </div>
 
             <div className="border-t pt-4 mt-4">

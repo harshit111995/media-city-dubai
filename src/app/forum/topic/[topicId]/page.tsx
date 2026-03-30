@@ -22,13 +22,40 @@ export async function generateMetadata({ params }: { params: Promise<{ topicId: 
 
     if (!topic) return { title: 'Topic Not Found' };
 
+    const title = `${topic.title} | Media Forum Topic`;
+    const description = topic.content.length > 150 
+        ? topic.content.substring(0, 150) + '...' 
+        : topic.content;
+
     return {
-        title: `${topic.title} | Media City Dubai Forum`,
-        description: topic.content.substring(0, 160),
+        title: title.substring(0, 60),
+        description: description,
+        alternates: {
+            canonical: `/forum/topic/${topicId}`,
+        },
         openGraph: {
             title: topic.title,
+            description: description,
             type: 'article',
             authors: [topic.author],
+            url: `https://mediacitydubai.com/forum/topic/${topicId}`,
+            siteName: 'Media City Dubai',
+            images: [
+                {
+                    url: topic.headerImage || 'https://mediacitydubai.com/images/forum-minimalist.png',
+                    width: 1200,
+                    height: 630,
+                    alt: topic.title,
+                }
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: topic.title,
+            description: description,
+            images: [topic.headerImage || 'https://mediacitydubai.com/images/forum-minimalist.png'],
+            site: '@mediacitydubai',
+            creator: '@mediacitydubai',
         },
     };
 }
@@ -132,8 +159,37 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
                     </div>
                 )}
 
-                <div className={styles.postContent}>
-                    <ReactMarkdown>{topic.content}</ReactMarkdown>
+                <div 
+                    className="cms-content text-gray-800"
+                    dangerouslySetInnerHTML={{ __html: topic.content }}
+                />
+
+                {/* Related Articles — Depth Enrichment */}
+                <div className="mt-16 pt-10 border-t border-gray-100">
+                    <h2 className="text-2xl font-bold mb-8 text-gray-900 font-playfair">More in {topic.category}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {(await prisma.post.findMany({
+                            where: {
+                                category: topic.category,
+                                NOT: { id: topic.id }
+                            },
+                            take: 2,
+                            orderBy: { publishedAt: 'desc' }
+                        })).map((rel) => (
+                            <Link 
+                                key={rel.id} 
+                                href={`/forum/topic/${rel.slug}`}
+                                className="group block"
+                            >
+                                {rel.headerImage && (
+                                    <div className="relative h-40 w-full mb-4 rounded-xl overflow-hidden">
+                                        <img src={rel.headerImage} alt={rel.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                    </div>
+                                )}
+                                <h3 className="font-bold text-gray-900 group-hover:text-accent transition-colors line-clamp-2">{rel.title}</h3>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Footer / Share only - Comments removed */}

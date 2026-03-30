@@ -19,8 +19,35 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     const decodedCategory = decodeURIComponent(category);
 
     return {
-        title: `${decodedCategory} Discussions | Media City Dubai Forum`,
-        description: `Join the conversation in ${decodedCategory}.`,
+        title: `${decodedCategory} Community & Discussion | Media Forum`,
+        description: `Join the latest ${decodedCategory} discussions and share your insights with media professionals in Dubai. Start a conversation today.`,
+        alternates: {
+            canonical: `/forum/category/${category}`,
+        },
+        openGraph: {
+            title: `${decodedCategory} Discussions | Media City Dubai`,
+            description: `Connect with peers in the ${decodedCategory} community. Insights and discussions for Dubai media pros.`,
+            url: `https://mediacitydubai.com/forum/category/${category}`,
+            siteName: 'Media City Dubai',
+            locale: 'en_US',
+            type: 'website',
+            images: [
+                {
+                    url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                    width: 1200,
+                    height: 630,
+                    alt: `${decodedCategory} Category`,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${decodedCategory} Discussions | Media City Dubai`,
+            description: `Join the ${decodedCategory} conversation in Dubai's media hub.`,
+            images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+            site: '@mediacitydubai',
+            creator: '@mediacitydubai',
+        },
     };
 }
 

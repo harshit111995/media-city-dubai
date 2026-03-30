@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createEvent, updateEvent } from '@/app/actions';
 import { Event } from '@prisma/client';
+import RichTextEditor from './RichTextEditor';
 
 interface EventFormProps {
     event?: Event;
@@ -11,6 +12,7 @@ interface EventFormProps {
 export default function EventForm({ event }: EventFormProps) {
     const action = event ? updateEvent.bind(null, event.id) : createEvent;
     const [preview, setPreview] = useState<string | null>(event?.headerImage || null);
+    const [description, setDescription] = useState(event?.description || '');
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -80,6 +82,16 @@ export default function EventForm({ event }: EventFormProps) {
                         className="w-full border p-2 rounded"
                     />
                 </div>
+                <div>
+                    <label className="block text-sm font-medium mb-1">Registration URL</label>
+                    <input
+                        name="registrationUrl"
+                        type="url"
+                        placeholder="https://eventbrite.com/..."
+                        defaultValue={(event as any)?.registrationUrl || ''}
+                        className="w-full border p-2 rounded"
+                    />
+                </div>
             </div>
 
             <div>
@@ -94,15 +106,15 @@ export default function EventForm({ event }: EventFormProps) {
                     <div className="flex-1">
                         <input
                             type="file"
-                            name="headerImage"
+                            name="headerImageFile"
                             accept="image/*"
                             onChange={handleImageChange}
                             className="w-full border p-2 rounded"
                         />
                         <p className="text-xs text-gray-500 mt-1">Upload an image (JPG, PNG, WebP) or check console for S3 URL after save.</p>
                         {/* Fallback for keeping existing URL if no new file selected */}
-                        {event?.headerImage && !preview?.startsWith('blob:') && (
-                            <input type="hidden" name="headerImage" value={event.headerImage} />
+                        {preview && !preview.startsWith('blob:') && (
+                            <input type="hidden" name="headerImage" value={preview} />
                         )}
                     </div>
                 </div>
@@ -119,14 +131,13 @@ export default function EventForm({ event }: EventFormProps) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium mb-1">Description (Content)</label>
-                <textarea
-                    name="description"
-                    defaultValue={event?.description}
-                    required
-                    className="w-full border p-2 rounded font-mono"
-                    rows={10}
+                <label className="block text-sm font-medium mb-1">Description (Rich Content)</label>
+                <RichTextEditor 
+                    content={description} 
+                    onChange={setDescription} 
+                    placeholder="Describe the event, add headers, links, and formatting..."
                 />
+                <input type="hidden" name="description" value={description} />
             </div>
 
             <div className="border-t pt-4 mt-4">

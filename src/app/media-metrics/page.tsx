@@ -4,6 +4,33 @@ import Link from 'next/link';
 export const metadata: Metadata = {
     title: 'Media Metrics Glossary | Media City Dubai',
     description: 'A comprehensive appendix of key metrics across General Media, Paid Media, and Programmatic Media — with clear definitions for every professional.',
+    alternates: {
+        canonical: '/media-metrics',
+    },
+    openGraph: {
+        title: 'Media Metrics Glossary | AdTech & Media Hub',
+        description: 'Master the terminology of Dubai\'s media landscape with our comprehensive 100+ metric reference guide.',
+        url: 'https://mediacitydubai.com/media-metrics',
+        siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Media Metrics Glossary',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Media Metrics Glossary | AdTech & Media Hub',
+        description: 'Your primary reference for media planning and measurement terms in Dubai.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
+    },
 };
 
 const sections = [

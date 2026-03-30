@@ -401,7 +401,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
                     <div className="flex justify-between items-center mb-10 pb-6 border-b border-gray-200">
                         <div className="flex items-center space-x-3">
                             <Terminal className="w-5 h-5 text-red-600" />
-                            <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-widest uppercase">{title} Solver</h3>
+                            <h1 className="text-xl md:text-2xl font-bold text-gray-900 tracking-widest uppercase">{title} Solver</h1>
                         </div>
 
                         {allVariables.some(f => f.type === 'currency') && (

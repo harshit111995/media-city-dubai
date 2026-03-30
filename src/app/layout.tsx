@@ -15,8 +15,49 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://mediacitydubai.com'),
-  title: 'Media City Dubai',
-  description: 'The premier hub for media, adtech, and events in Dubai.',
+  title: {
+    default: 'Media City Dubai | Premier AdTech Hub & Events Directory',
+    template: '%s | Media City Dubai',
+  },
+  description: 'Explore the leading hub for media, adtech, and marketing in Dubai. Discover 200+ marketing tools, 30+ KPI calculators, and upcoming industry events.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Media City Dubai | AdTech, Tools & Events Hub',
+    description: 'The premier digital destination for media professionals in Dubai. Access 200+ marketing tools, 30+ KPI calculators, and the latest industry news.',
+    url: 'https://mediacitydubai.com',
+    siteName: 'Media City Dubai',
+    locale: 'en_US',
+    type: 'website',
+    images: [
+      {
+        url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+        width: 1200,
+        height: 630,
+        alt: 'Media City Dubai Hub',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Media City Dubai | AdTech & Media Hub',
+    description: 'Your central resource for marketing tools, events, and performance metrics in Dubai.',
+    images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+    site: '@mediacitydubai',
+    creator: '@mediacitydubai',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -27,6 +68,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable}`}>
       <body suppressHydrationWarning>
+        <GoogleTagManager gtmId="GTM-NHN56LC7" />
         {/* Organization + WebSite Schema — site-wide structured data */}
         <script
           type="application/ld+json"
@@ -41,14 +83,20 @@ export default function RootLayout({
                 logo: {
                   '@type': 'ImageObject',
                   url: 'https://mediacitydubai.com/images/forum-minimalist.png',
-                  width: 512,
-                  height: 512,
                 },
+                image: 'https://mediacitydubai.com/images/forum-minimalist.png',
                 description: 'The premier digital hub for media, adtech, and events in Dubai — connecting media professionals, creative agencies, and technology providers across the MENA region.',
                 address: {
                   '@type': 'PostalAddress',
+                  streetAddress: 'Dubai Media City',
                   addressLocality: 'Dubai',
                   addressCountry: 'AE',
+                },
+                contactPoint: {
+                  '@type': 'ContactPoint',
+                  contactType: 'customer support',
+                  email: 'contact@mediacitydubai.com',
+                  url: 'https://mediacitydubai.com/contact',
                 },
                 sameAs: [
                   'https://mediacitydubai.com',
@@ -85,7 +133,6 @@ export default function RootLayout({
 
         {/* Google Tracking Scripts */}
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
-        <GoogleTagManager gtmId="GTM-NHN56LC7" />
 
         {/* Google AdSense Script */}
         <Script

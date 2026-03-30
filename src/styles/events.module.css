@@ -76,6 +76,11 @@
     line-height: 1.6;
     margin-bottom: var(--spacing-md);
     flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow: hidden;
 }
 
 .cardFooter {

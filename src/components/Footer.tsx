@@ -31,6 +31,7 @@ export default function Footer() {
                             <li><Link href="/media-metrics">Media Metrics Glossary</Link></li>
                             <li><Link href="/forum">Community Forum</Link></li>
                             <li><Link href="/about">About Us</Link></li>
+                            <li><Link href="/contact">Contact Us</Link></li>
                         </ul>
                     </div>
 

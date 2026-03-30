@@ -6,6 +6,12 @@
     color: var(--color-text-main);
 }
 
+@media (max-width: 768px) {
+    .footer {
+        padding: 4rem 1rem 2rem;
+    }
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -16,6 +22,13 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 4rem;
     margin-bottom: 6rem;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
 }
 
 .brandCol {
@@ -136,7 +149,7 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     color: var(--color-text-muted);
     font-size: 0.85rem;
 }
@@ -144,6 +157,20 @@
 .legalLinks {
     display: flex;
     gap: 2rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+    .legalLinks {
+        gap: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+    .copyright {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
 }
 
 .legalLinks a {

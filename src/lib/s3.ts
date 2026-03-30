@@ -22,11 +22,15 @@ export async function uploadFileToS3(file: File): Promise<string> {
 
     try {
         await s3Client.send(command);
+        
         // Construct the public URL
         // Format: https://BUCKET_NAME.s3.REGION.amazonaws.com/FILENAME
-        return `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
+        const publicUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
+        
+        console.log(`Successfully uploaded to S3: ${publicUrl}`);
+        return publicUrl;
     } catch (error) {
-        console.error('Error uploading to S3:', error);
-        throw new Error('Failed to upload image');
+        console.error('CRITICAL: Error uploading to S3. Ensure AWS credentials and S3_BUCKET_NAME are correct in .env:', error);
+        throw new Error('Failed to upload image to S3. Check server logs.');
     }
 }

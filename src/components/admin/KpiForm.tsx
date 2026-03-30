@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createKpi, updateKpi } from '@/app/actions';
 import { Kpi } from '@prisma/client';
+import RichTextEditor from './RichTextEditor';
 
 interface KpiFormProps {
     kpi?: Kpi;
@@ -10,6 +11,7 @@ interface KpiFormProps {
 
 export default function KpiForm({ kpi }: KpiFormProps) {
     const action = kpi ? updateKpi.bind(null, kpi.id) : createKpi;
+    const [description, setDescription] = useState(kpi?.description || '');
 
     // We store the dynamic fields config as a string in the DB.
     // E.g., [{"name": "revenue", "label": "Total Revenue", "type": "currency"}]
@@ -76,33 +78,48 @@ export default function KpiForm({ kpi }: KpiFormProps) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium mb-1">Short Description</label>
+                <label className="block text-sm font-medium mb-1">Description (Rich Editor)</label>
+                <RichTextEditor 
+                    content={description} 
+                    onChange={setDescription} 
+                    placeholder="Describe the metric, how to improve it, and what it measures..."
+                />
+                <input type="hidden" name="description" value={description} />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700">Example Usage (Optional)</label>
                 <textarea
-                    name="description"
-                    defaultValue={kpi?.description}
-                    required
-                    className="w-full border p-2 rounded"
-                    rows={4}
+                    name="example"
+                    defaultValue={kpi?.example || ''}
+                    className="w-full border p-2 rounded text-gray-900"
+                    rows={3}
+                    placeholder="e.g. If your revenue is $1000 and cost is $500, your margin is 50%."
                 />
             </div>
 
-            <div className="pt-4 border-t">
-                <h3 className="font-semibold mb-3">SEO Elements</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="pt-6 border-t border-gray-100">
+                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-accent rounded-full" />
+                    SEO & Meta Metadata
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium mb-1">SEO Title</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700">SEO Title</label>
                         <input
                             name="seoTitle"
                             defaultValue={kpi?.seoTitle || ''}
-                            className="w-full border p-2 rounded"
+                            className="w-full border p-2 rounded text-gray-900 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all"
+                            placeholder="Ideal for Google search results"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">SEO Description</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700">SEO Description</label>
                         <input
                             name="seoDescription"
                             defaultValue={kpi?.seoDescription || ''}
-                            className="w-full border p-2 rounded"
+                            className="w-full border p-2 rounded text-gray-900 focus:ring-2 focus:ring-accent focus:border-accent outline-none transition-all"
+                            placeholder="Short summary for search results"
                         />
                     </div>
                 </div>

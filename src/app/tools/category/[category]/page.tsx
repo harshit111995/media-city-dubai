@@ -18,8 +18,35 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     const decodedCategory = decodeURIComponent(category);
 
     return {
-        title: `${decodedCategory} Tools | Media City Dubai`,
-        description: `Discover the best ${decodedCategory} solutions for media professionals in Dubai.`,
+        title: `${decodedCategory} Media Tools & Software | Directory`,
+        description: `Explore the top ${decodedCategory} solutions and software in Dubai. Compare features and reviews for leading media technology.`,
+        alternates: {
+            canonical: `/tools/category/${category}`,
+        },
+        openGraph: {
+            title: `${decodedCategory} Media Tools & Software | Media City Dubai`,
+            description: `Discover best-in-class ${decodedCategory} for your marketing and media operations.`,
+            url: `https://mediacitydubai.com/tools/category/${category}`,
+            siteName: 'Media City Dubai',
+            locale: 'en_US',
+            type: 'website',
+            images: [
+                {
+                    url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                    width: 1200,
+                    height: 630,
+                    alt: `${decodedCategory} Tools`,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${decodedCategory} Media Tools & Software | Media City Dubai`,
+            description: `Find the best ${decodedCategory} in Dubai's premier tool directory.`,
+            images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+            site: '@mediacitydubai',
+            creator: '@mediacitydubai',
+        },
     };
 }
 
@@ -43,7 +70,7 @@ export default async function ToolCategoryPage({ params }: { params: Promise<{ c
         return (
             <div className={styles.container}>
                 <div className="text-center py-20">
-                    <h1 className="text-3xl font-bold mb-4">Category Not Found</h1>
+                    <h2 className="text-3xl font-bold mb-4">Category Not Found</h2>
                     <Link href="/tools" className="text-accent hover:underline">Return to Tools Directory</Link>
                 </div>
             </div>

@@ -4,7 +4,34 @@ import { ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: 'GDPR Compliance | Media City Dubai',
-    description: 'Information regarding Media City Dubai compliance with the General Data Protection Regulation (GDPR).',
+    description: 'Information regarding Media City Dubai compliance with the General Data Protection Regulation (GDPR) and your data rights.',
+    alternates: {
+        canonical: '/gdpr',
+    },
+    openGraph: {
+        title: 'GDPR Compliance | Media City Dubai',
+        description: 'How we ensure data privacy and comply with global standards like GDPR.',
+        url: 'https://mediacitydubai.com/gdpr',
+        siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Media City Dubai Hub',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'GDPR Compliance | Media City Dubai',
+        description: 'Data protection and GDPR compliance information for Media City Dubai.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
+    },
 };
 
 export default function GDPRPage() {

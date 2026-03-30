@@ -7,14 +7,18 @@
     text-align: center;
     padding: 6rem 1rem 4rem 1rem;
     background: white;
-    /* Optional: usage of the line art as a subtle background or main element */
     background-image: url('/images/hero-minimalist.png');
     background-size: cover;
     background-position: center;
     background-blend-mode: overlay;
-    /* Soften the image */
     background-color: rgba(255, 255, 255, 0.95);
-    /* High opacity overlay to keep it subtle */
+}
+
+@media (max-width: 640px) {
+    .hero {
+        padding: 4rem 1rem 2rem 1rem;
+        min-height: auto;
+    }
 }
 
 .heroContent {
@@ -39,11 +43,17 @@
 .title {
     font-family: var(--font-inter);
     font-weight: 800;
-    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-size: clamp(2.5rem, 8vw, 6rem);
     line-height: 1.15;
     margin-bottom: 1.5rem;
     letter-spacing: -0.04em;
     color: var(--color-text-main);
+}
+@media (max-width: 640px) {
+  .hero {
+    padding: 4rem 1rem 3rem 1rem;
+    min-height: auto;
+  }
 }
 
 .subtitle {
@@ -62,6 +72,13 @@
     justify-content: center;
 }
 
+@media (max-width: 480px) {
+    .ctaGroup {
+        flex-direction: column;
+        width: 100%;
+    }
+}
+
 /* Sections */
 .section {
     padding: 3rem 1rem;
@@ -74,6 +91,12 @@
     grid-template-columns: 1fr 1fr;
     gap: 2.5rem;
     align-items: center;
+}
+@media (max-width: 768px) {
+    .splitLayout, .splitLayoutReverse {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
 }
 
 /* Reverse layout for alternating sections */
@@ -106,7 +129,7 @@
 }
 
 .sectionTitle {
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-weight: 800;
     margin-bottom: 1rem;
     line-height: 1.1;
@@ -155,6 +178,14 @@
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .featuresGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
 }
 
 .featureCard {

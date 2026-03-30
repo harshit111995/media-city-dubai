@@ -4,7 +4,34 @@ import { ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: 'Disclaimer | Media City Dubai',
-    description: 'Legal disclaimer for Media City Dubai.',
+    description: 'Legal disclaimer for Media City Dubai regarding information accuracy and external content.',
+    alternates: {
+        canonical: '/disclaimer',
+    },
+    openGraph: {
+        title: 'Disclaimer | Media City Dubai',
+        description: 'Important legal notices and information regarding the Media City Dubai platform.',
+        url: 'https://mediacitydubai.com/disclaimer',
+        siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Media City Dubai Hub',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Disclaimer | Media City Dubai',
+        description: 'Legal information and disclaimers for the Media City Dubai community.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
+    },
 };
 
 export default function DisclaimerPage() {

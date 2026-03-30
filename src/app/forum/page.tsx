@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Clock } from 'lucide-react';
 import styles from '@/styles/forum.module.css';
 import { prisma } from '@/lib/prisma';
+import { stripHtml, truncate } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,33 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
     title: 'Media Community Forum | Media City Dubai',
     description: 'Join the conversation. Discuss industry trends, career advice, and tech support with Dubai\'s media professionals.',
+    alternates: {
+        canonical: '/forum',
+    },
+    openGraph: {
+        title: 'Media Community Forum | Media City Dubai',
+        description: 'Connect with peers in Dubai\'s media and adtech community. Share insights and build your network.',
+        url: 'https://mediacitydubai.com/forum',
+        siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Media City Dubai Forum',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Media Community Forum | Media City Dubai',
+        description: 'Discuss the latest industry trends with professionals in Media City Dubai.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
+    },
 };
 
 export default async function ForumPage() {
@@ -71,6 +99,9 @@ export default async function ForumPage() {
                             <Link href={`/forum/topic/${topic.slug}`} className={styles.topicTitle}>
                                 {topic.title}
                             </Link>
+                            <p className="text-sm text-gray-400 mt-1 mb-2 line-clamp-2">
+                                {truncate(stripHtml(topic.shortDescription || topic.content), 120)}
+                            </p>
                             <div className={styles.topicMeta}>
                                 <span className="mr-4">by <span className="text-white">{topic.author}</span></span>
                                 <span className="flex items-center inline-flex gap-1">

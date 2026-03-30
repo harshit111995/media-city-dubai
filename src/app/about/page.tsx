@@ -4,6 +4,33 @@ import Link from 'next/link';
 export const metadata: Metadata = {
     title: 'About Us | Media City Dubai',
     description: 'Learn about the mission of Media City Dubai to connect and empower the region\'s media, tech, and creative professionals.',
+    alternates: {
+        canonical: '/about',
+    },
+    openGraph: {
+        title: 'About Media City Dubai | AdTech & Media Hub',
+        description: 'Connecting creative professionals and technology providers across the MENA region.',
+        url: 'https://mediacitydubai.com/about',
+        siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'About Media City Dubai',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'About Media City Dubai | AdTech & Media Hub',
+        description: 'Empowering Dubai\'s media ecosystem through technology and community.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
+    },
 };
 
 export default function AboutPage() {
@@ -16,11 +43,7 @@ export default function AboutPage() {
             url: `${baseUrl}/about`,
             name: 'About Media City Dubai',
             description: 'Media City Dubai is a digital platform designed to bridge the gap between creative professionals, technology providers, and industry events in the region.',
-            publisher: {
-                '@type': 'Organization',
-                name: 'Media City Dubai',
-                url: baseUrl,
-            },
+            publisher: { '@id': 'https://mediacitydubai.com/#organization' },
         },
         {
             '@context': 'https://schema.org',

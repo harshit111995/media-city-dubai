@@ -7,11 +7,33 @@ import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
     title: 'AdTech & MarTech Tools Directory | Media City Dubai',
-    description: 'Explore the best advertising and marketing technology tools. Reviews, pricing, and features of top platforms used by Dubai media professionals.',
+    description: 'Explore the best advertising and marketing technology tools. Reviews, pricing, and features of 200+ platforms used by Dubai media professionals.',
+    alternates: {
+        canonical: '/tools',
+    },
     openGraph: {
-        title: 'AdTech & MarTech Tools Directory',
-        description: 'Curated list of essential tools for the digital media ecosystem.',
+        title: 'AdTech & MarTech Tools Directory | Media City Dubai',
+        description: 'Discover 200+ essential tools for the digital media ecosystem in Dubai and the MENA region.',
+        url: 'https://mediacitydubai.com/tools',
         siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Media City Dubai Tools Directory',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'AdTech & MarTech Tools Directory | Media City Dubai',
+        description: 'Explore the software powering the future of media in Dubai.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
     },
 };
 

@@ -66,6 +66,8 @@
 
     .mobileMenuBtn {
         display: block;
+        padding: 0.5rem;
+        margin-right: -0.5rem;
     }
 }
 
@@ -79,7 +81,6 @@
     background: var(--color-secondary);
     border: 1px solid transparent;
     border-radius: 4px;
-    /* Less rounded for minimalist feel */
     padding: 0.4rem 0.8rem;
     color: var(--color-text-main);
     font-size: 0.85rem;
@@ -109,12 +110,23 @@
     border-bottom: 1px solid var(--color-border);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     gap: 1.25rem;
+    z-index: 100;
+}
+
+.mobileMenu .searchForm {
+    margin-left: 0;
+    width: 100%;
+}
+
+.mobileMenu .searchInput {
+    width: 100% !important;
 }
 
 .mobileLink {
     color: var(--color-text-main);
     font-size: 1.1rem;
     font-weight: 600;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--color-border);
+    display: block;
 }

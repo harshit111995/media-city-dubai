@@ -15,7 +15,34 @@ interface Props {
 
 export const metadata: Metadata = {
     title: 'Search Results | Media City Dubai',
-    description: 'Search across events, tools, and forum discussions.',
+    description: 'Search across events, tools, and forum discussions to find the resources you need in the Dubai media ecosystem.',
+    alternates: {
+        canonical: '/search',
+    },
+    openGraph: {
+        title: 'Search Media City Dubai | AdTech & Media Hub',
+        description: 'Find tools, events, and discussions in the premier media ecosystem of Dubai.',
+        url: 'https://mediacitydubai.com/search',
+        siteName: 'Media City Dubai',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+            {
+                url: 'https://mediacitydubai.com/images/forum-minimalist.png',
+                width: 1200,
+                height: 630,
+                alt: 'Search Media City Dubai',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Search Media City Dubai | AdTech & Media Hub',
+        description: 'Find exactly what you need in Dubai\'s media and tech hub.',
+        images: ['https://mediacitydubai.com/images/forum-minimalist.png'],
+        site: '@mediacitydubai',
+        creator: '@mediacitydubai',
+    },
 };
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
@@ -61,9 +88,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     return (
         <div className={styles.container}>
             <header className="mb-12">
-                <h1 className="text-4xl font-playfair font-bold mb-2">
+                <h2 className="text-4xl font-playfair font-bold mb-2">
                     Search Results: <span className="text-accent">"{q}"</span>
-                </h1>
+                </h2>
                 <p className="text-gray-400">Found {totalResults} results</p>
             </header>
 

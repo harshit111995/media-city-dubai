@@ -27,13 +27,21 @@ export default async function AdminDashboard() {
                     </div>
                     <div className="space-y-4">
                         {posts.map((post) => (
-                            <div key={post.id} className="border-b pb-2 flex justify-between items-center">
-                                <div>
-                                    <h3 className="font-medium">{post.title}</h3>
-                                    <span className="text-sm text-gray-500">{post.category}</span>
+                            <div key={post.id} className="border-b pb-2 flex justify-between items-center gap-3">
+                                <div className="flex items-center gap-3">
+                                    {post.headerImage && (
+                                        <div className="w-10 h-10 rounded overflow-hidden border bg-gray-50 flex-shrink-0">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={post.headerImage} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                    <div>
+                                        <h3 className="font-medium line-clamp-1">{post.title}</h3>
+                                        <span className="text-xs text-gray-500">{post.category}</span>
+                                    </div>
                                 </div>
-                                <div className="space-x-2">
-                                    <Link href={`/admin/posts/${post.id}`} className="text-blue-600 hover:underline">
+                                <div className="space-x-2 flex-shrink-0">
+                                    <Link href={`/admin/posts/${post.id}`} className="text-blue-600 hover:underline text-sm font-medium">
                                         Edit
                                     </Link>
                                 </div>
@@ -47,19 +55,27 @@ export default async function AdminDashboard() {
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold">Events</h2>
-                        <Link href="/admin/events/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <Link href="/admin/events/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
                             Create Event
                         </Link>
                     </div>
                     <div className="space-y-4">
                         {events.map((event) => (
-                            <div key={event.id} className="border-b pb-2 flex justify-between items-center">
-                                <div>
-                                    <h3 className="font-medium">{event.title}</h3>
-                                    <span className="text-sm text-gray-500">{new Date(event.date).toLocaleDateString()}</span>
+                            <div key={event.id} className="border-b pb-2 flex justify-between items-center gap-3">
+                                <div className="flex items-center gap-3">
+                                    {event.headerImage && (
+                                        <div className="w-10 h-10 rounded overflow-hidden border bg-gray-50 flex-shrink-0">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={event.headerImage} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                    <div>
+                                        <h3 className="font-medium line-clamp-1">{event.title}</h3>
+                                        <span className="text-xs text-gray-500">{new Date(event.date).toLocaleDateString()}</span>
+                                    </div>
                                 </div>
-                                <div className="space-x-2">
-                                    <Link href={`/admin/events/${event.id}`} className="text-blue-600 hover:underline">
+                                <div className="space-x-2 flex-shrink-0">
+                                    <Link href={`/admin/events/${event.id}`} className="text-blue-600 hover:underline text-sm font-medium">
                                         Edit
                                     </Link>
                                 </div>
@@ -73,19 +89,27 @@ export default async function AdminDashboard() {
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold">Tools</h2>
-                        <Link href="/admin/tools/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <Link href="/admin/tools/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
                             Create Tool
                         </Link>
                     </div>
                     <div className="space-y-4">
                         {tools.map((tool) => (
-                            <div key={tool.id} className="border-b pb-2 flex justify-between items-center">
-                                <div>
-                                    <h3 className="font-medium">{tool.title}</h3>
-                                    <span className="text-sm text-gray-500">{tool.category}</span>
+                            <div key={tool.id} className="border-b pb-2 flex justify-between items-center gap-3">
+                                <div className="flex items-center gap-3">
+                                    {tool.imageUrl && (
+                                        <div className="w-10 h-10 rounded overflow-hidden border bg-gray-50 flex-shrink-0">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={tool.imageUrl} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                    <div>
+                                        <h3 className="font-medium line-clamp-1">{tool.title}</h3>
+                                        <span className="text-xs text-gray-500">{tool.category}</span>
+                                    </div>
                                 </div>
-                                <div className="space-x-2">
-                                    <Link href={`/admin/tools/${tool.id}`} className="text-blue-600 hover:underline">
+                                <div className="space-x-2 flex-shrink-0">
+                                    <Link href={`/admin/tools/${tool.id}`} className="text-blue-600 hover:underline text-sm font-medium">
                                         Edit
                                     </Link>
                                 </div>
@@ -98,20 +122,20 @@ export default async function AdminDashboard() {
                 {/* KPI Calculators Section */}
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">KPI Calculators</h2>
-                        <Link href="/admin/kpi/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        <h2 className="text-xl font-semibold">KPIs</h2>
+                        <Link href="/admin/kpi/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
                             Create KPI
                         </Link>
                     </div>
                     <div className="space-y-4">
                         {kpis.map((kpi) => (
-                            <div key={kpi.id} className="border-b pb-2 flex justify-between items-center">
+                            <div key={kpi.id} className="border-b pb-2 flex justify-between items-center gap-3">
                                 <div>
-                                    <h3 className="font-medium">{kpi.title}</h3>
-                                    <span className="text-sm text-gray-500">{kpi.category}</span>
+                                    <h3 className="font-medium line-clamp-1">{kpi.title}</h3>
+                                    <span className="text-xs text-gray-500">{kpi.category}</span>
                                 </div>
-                                <div className="space-x-2">
-                                    <Link href={`/admin/kpi/${kpi.id}`} className="text-blue-600 hover:underline">
+                                <div className="space-x-2 flex-shrink-0">
+                                    <Link href={`/admin/kpi/${kpi.id}`} className="text-blue-600 hover:underline text-sm font-medium">
                                         Edit
                                     </Link>
                                 </div>

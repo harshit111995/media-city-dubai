@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from '@/styles/tools.module.css';
+import { stripHtml, truncate } from '@/lib/utils';
 
 import { Tool } from '@prisma/client';
 
@@ -99,9 +100,8 @@ export default function ToolsList({ tools }: ToolsListProps) {
                                 <span className={styles.categoryTag}>{tool.category}</span>
                             </div>
                         </div>
-
                         <h2 className={styles.cardTitle}>{tool.title}</h2>
-                        <p className={styles.shortDesc}>{tool.description.substring(0, 80)}...</p>
+                        <p className={styles.shortDesc}>{truncate(stripHtml(tool.description), 120)}</p>
 
                         <div className={styles.cardFooter}>
                             <span className="text-sm font-medium text-gray-400 group-hover:text-accent transition-colors">View Details</span>
