@@ -86,22 +86,42 @@ export default async function ForumCategoryPage({ params }: { params: Promise<{ 
                 <div className={styles.topicList}>
                     {categoryTopics.map((topic) => (
                         <div key={topic.id} className={styles.topicRow}>
-                            <div className={styles.topicMain}>
-                                <span className={styles.topicCategory}>{topic.category}</span>
-                                <Link href={`/forum/topic/${topic.slug}`} className={styles.topicTitle}>
-                                    {topic.title}
-                                </Link>
-                                <div className={styles.topicMeta}>
-                                    <span className="mr-4">by <span className="text-white">{topic.author}</span></span>
-                                    <span className="flex items-center inline-flex gap-1">
-                                        <Clock size={12} />
-                                        {new Date(topic.publishedAt).toLocaleDateString()}
-                                    </span>
+                            <div className="flex items-start w-full">
+                                {/* Thumbnail on left */}
+                                <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden relative mr-5 bg-white/5 border border-white/10 hidden sm:block">
+                                    <Image 
+                                        src={topic.thumbnail || topic.headerImage || (
+                                            topic.category === 'Industry News' ? '/images/forum-minimalist.png' :
+                                            topic.category === 'Career Advice' ? '/images/hero-minimalist.png' :
+                                            '/images/events-minimalist.png'
+                                        )}
+                                        alt={topic.title}
+                                        fill
+                                        className="object-cover transition-transform hover:scale-105"
+                                        sizes="80px"
+                                    />
+                                </div>
+                                <div className={styles.topicMain}>
+                                    <span className={styles.topicCategory}>{topic.category}</span>
+                                    <Link href={`/forum/topic/${topic.slug}`} className={styles.topicTitle}>
+                                        {topic.title}
+                                    </Link>
+                                    <p className="text-sm text-gray-400 mt-1 mb-2 line-clamp-2">
+                                        {topic.shortDescription || topic.content.substring(0, 120) + '...'}
+                                    </p>
+                                    <div className={styles.topicMeta}>
+                                        <span className="mr-4">by <span className="text-white">{topic.author}</span></span>
+                                        <span className="flex items-center inline-flex gap-1">
+                                            <Clock size={12} />
+                                            {new Date(topic.publishedAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+
             )}
         </div>
     );

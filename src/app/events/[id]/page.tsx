@@ -289,8 +289,27 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                             This event is organized by <strong>{event.organizer}</strong>. You can find more details or register via the button above.
                         </p>
                     </div>
+                    <div>
+                        <h4 className="text-lg font-bold mb-3 text-accent">Who should attend {event.title}?</h4>
+                        <p className="text-gray-400 leading-relaxed">
+                            This event is specifically designed for professionals, founders, and decision-makers in the <strong>{event.category}</strong> sector looking to expand their regional network.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-bold mb-3 text-accent">Is there a registration fee?</h4>
+                        <p className="text-gray-400 leading-relaxed">
+                            Registration parameters vary. Click the "Secure Your Spot" button above to review ticket tiers, delegate passes, and exclusive discounts for local businesses.
+                        </p>
+                    </div>
+                    <div className="md:col-span-2">
+                        <h4 className="text-lg font-bold mb-3 text-accent">Will food and beverages be provided?</h4>
+                        <p className="text-gray-400 leading-relaxed">
+                            Complimentary catering, coffee, and refreshments will be served during networking breaks throughout the event.
+                        </p>
+                    </div>
                 </div>
             </div>
+
         </div>
     );
 }

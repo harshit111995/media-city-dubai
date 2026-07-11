@@ -192,6 +192,43 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
                     </div>
                 </div>
 
+                {/* Article FAQ Section */}
+                <div className="mt-16 bg-gray-50 rounded-2xl p-8 border border-gray-200">
+                    <h3 className="text-xl font-bold mb-6 text-gray-900 font-playfair">Frequently Asked Questions</h3>
+                    <div className="space-y-4">
+                        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 className="font-bold text-accent mb-2">Who is the author of this article?</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                This article is authored by <strong>{topic.author}</strong>, focusing on key developments in the <strong>{topic.category}</strong> industry.
+                            </p>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 className="font-bold text-accent mb-2">What is the primary topic category?</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                This publication belongs to the <strong>{topic.category}</strong> category, representing trending market insights in Dubai's media and tech landscape.
+                            </p>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 className="font-bold text-accent mb-2">Can I reference or cite this article?</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                Yes, you can cite this article by referencing Media City Dubai and utilizing the canonical URL: <span className="font-mono bg-gray-100 px-1 py-0.5 rounded text-accent font-semibold">/forum/topic/{topic.slug}</span>.
+                            </p>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 className="font-bold text-accent mb-2">How can I submit my own article or discussion?</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                Registered media professionals and verified contributors can submit threads, editorial topics, and market reports directly via the publisher dashboard.
+                            </p>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 className="font-bold text-accent mb-2">How frequently is the community forum updated?</h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                New articles, regulatory updates, event schedules, and forum topics are updated daily to reflect the fast-evolving media and tech sectors in Dubai.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Footer / Share only - Comments removed */}
                 <div className="flex gap-4 mt-8 pt-6 border-t border-gray-100">
                     <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-accent transition-colors">

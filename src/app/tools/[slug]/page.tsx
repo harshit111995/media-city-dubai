@@ -167,7 +167,63 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                             </div>
                         </div>
                     )}
+
+                    {/* Setup & Onboarding Guide */}
+                    <div className="mt-12 bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h2 className="text-xl font-bold mb-4 text-accent uppercase tracking-wider">How to Get Started with {tool.title}</h2>
+                        <div className="space-y-4">
+                            <div className="flex gap-4">
+                                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent border border-accent/30 flex-shrink-0">1</div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Create Account & Auth</h4>
+                                    <p className="text-sm text-gray-300">Sign up on their official portal, complete onboarding questionnaires, and request API credentials if custom data sync is needed.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent border border-accent/30 flex-shrink-0">2</div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Deploy SDK / Script Tags</h4>
+                                    <p className="text-sm text-gray-300">If utilizing for web tracking or analytics, integrate their JavaScript tag directly into your website head or deploy it securely via Google Tag Manager.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent border border-accent/30 flex-shrink-0">3</div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Map Conversion Goals</h4>
+                                    <p className="text-sm text-gray-300">Align events inside the dashboard to correspond to your core marketing funnel stages (impressions, clicks, add-to-cart, purchase).</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent border border-accent/30 flex-shrink-0">4</div>
+                                <div>
+                                    <h4 className="font-bold text-white mb-1">Evaluate Performance metrics</h4>
+                                    <p className="text-sm text-gray-300">Monitor tracking health regularly, audit log parameters for attribution gaps, and cross-reference with our KPI calculators to optimize spend.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Pros & Cons Grid */}
+                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-emerald-950/20 border border-emerald-900/30 rounded-2xl p-6">
+                            <h3 className="font-bold text-emerald-400 mb-3 uppercase tracking-wider text-xs">Advantages (Pros)</h3>
+                            <ul className="space-y-2 text-sm text-gray-300 list-disc pl-4">
+                                <li>Deep integration with leading ad servers and attribution networks.</li>
+                                <li>High accuracy, real-time data streaming capabilities.</li>
+                                <li>Custom segmentation filters and cohort analysis tools.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-rose-950/20 border border-rose-900/30 rounded-2xl p-6">
+                            <h3 className="font-bold text-rose-400 mb-3 uppercase tracking-wider text-xs">Limitations (Cons)</h3>
+                            <ul className="space-y-2 text-sm text-gray-300 list-disc pl-4">
+                                <li>Pricing can scale rapidly with increasing monthly tracked events.</li>
+                                <li>Steep learning curve for custom attribute configurations.</li>
+                                <li>Requires engineering support for advanced SDK deployments.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </main>
+
 
                 <aside className={styles.sidebar}>
                     <div className="glass-panel p-6 rounded-xl">
@@ -247,16 +303,34 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                     <div>
                         <h4 className="text-lg font-bold mb-2 text-accent">What is {tool.title} used for?</h4>
                         <p className="text-gray-300">
-                            {tool.title} is a premier solution in the {tool.category} space, primarily used for {tool.description.split('.')[0].toLowerCase()}.
+                            {tool.title} is a premier solution in the {tool.category} space, primarily used for {tool.description.split('.')[0].toLowerCase() || 'enhancing digital marketing workflows'}.
                         </p>
                     </div>
                     <div>
                         <h4 className="text-lg font-bold mb-2 text-accent">Is there a free version of {tool.title}?</h4>
                         <p className="text-gray-300">
                             {tool.pricing?.toLowerCase().includes('free')
-                                ? `Yes, ${tool.title} offers a free tier as part of its pricing model: ${tool.pricing}.`
-                                : `Pricing for ${tool.title} starts with their ${tool.pricing} model. Check their website for the latest trials and tiers.`
+                                ? `Yes, ${tool.title} offers a free tier or trial model: ${tool.pricing}.`
+                                : `Pricing for ${tool.title} is generally structured around a "${tool.pricing || 'Paid'}" model. Check their official website for seasonal discounts, free trials, or custom demo options.`
                             }
+                        </p>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-bold mb-2 text-accent">How does {tool.title} compare to other tools in the {tool.category} category?</h4>
+                        <p className="text-gray-300">
+                            {tool.title} stands out in the {tool.category} sector due to its tailored user experience and key features: {tool.features && tool.features.length > 0 ? tool.features.join(', ') : 'integrated workflows'}. You can explore similar tools in the directory to find the best match for your team.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-bold mb-2 text-accent">Can I use {tool.title} on mobile devices?</h4>
+                        <p className="text-gray-300">
+                            As a modern SaaS platform, {tool.title} features a responsive web interface that works across standard mobile browsers. Some advanced configurations and analytics dashboards may require a desktop display for optimal visibility.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-bold mb-2 text-accent">How do I get support and updates for {tool.title}?</h4>
+                        <p className="text-gray-300">
+                            For technical support, integration help, and the latest software release updates, please visit the official website for {tool.title} directly using the link provided in the "At a Glance" sidebar.
                         </p>
                     </div>
                 </div>
@@ -264,3 +338,4 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
         </div>
     );
 }
+
