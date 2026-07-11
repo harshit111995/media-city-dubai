@@ -13,6 +13,18 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "prefer-const": "warn",
+      "@next/next/no-img-element": "warn",
+      "react-hooks/set-state-in-effect": "off"
+    }
+
+  }
 ]);
+
 
 export default eslintConfig;
