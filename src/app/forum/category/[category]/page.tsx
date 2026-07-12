@@ -8,12 +8,6 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 
-interface Props {
-    params: {
-        category: string;
-    };
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
     const { category } = await params;
     const decodedCategory = decodeURIComponent(category);

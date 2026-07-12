@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import styles from '@/styles/admin.module.css';
-
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {

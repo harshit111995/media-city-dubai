@@ -8,12 +8,6 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 
-interface Props {
-    params: {
-        slug: string; // Updated to match the [slug] folder or mock data approach
-    };
-}
-
 // Generate dynamic metadata
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;

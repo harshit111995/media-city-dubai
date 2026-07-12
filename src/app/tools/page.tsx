@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle } from 'lucide-react';
 import ToolsList from '@/components/ToolsList';
 import styles from '@/styles/tools.module.css';
 import { prisma } from '@/lib/prisma';

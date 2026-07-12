@@ -1,17 +1,11 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import styles from '@/styles/tools.module.css';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
-
-interface Props {
-    params: {
-        category: string;
-    };
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
     const { category } = await params;
@@ -96,7 +90,7 @@ export default async function ToolCategoryPage({ params }: { params: Promise<{ c
                         <div className={styles.cardHeader}>
                             <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center font-bold text-xl text-accent overflow-hidden relative">
                                 {tool.imageUrl ? (
-                                    <img src={tool.imageUrl} alt={tool.title} className="w-full h-full object-cover" />
+                                    <Image src={tool.imageUrl} alt={tool.title} fill className="object-cover" sizes="48px" />
                                 ) : (
                                     tool.title.substring(0, 2)
                                 )}

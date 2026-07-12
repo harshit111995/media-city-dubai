@@ -7,12 +7,6 @@ import { deleteKpi } from '@/app/actions';
 
 export const dynamic = 'force-dynamic';
 
-interface Props {
-    params: {
-        id: string;
-    }
-}
-
 export default async function EditKpiPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const kpi = await prisma.kpi.findUnique({

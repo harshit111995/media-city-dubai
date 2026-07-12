@@ -1,17 +1,10 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
 import { Search as SearchIcon, ArrowRight } from 'lucide-react';
 import { events } from '@/data/events';
 import { tools } from '@/data/tools';
 import { forumTopics } from '@/data/forum';
 import styles from '@/styles/search.module.css';
-
-interface Props {
-    searchParams: {
-        q?: string;
-    };
-}
 
 export const metadata: Metadata = {
     title: 'Search Results | Media City Dubai',

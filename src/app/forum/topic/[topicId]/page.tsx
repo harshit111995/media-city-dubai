@@ -1,18 +1,12 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Share2 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
 import styles from '@/styles/forum.module.css';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
-
-interface Props {
-    params: {
-        slug: string;
-    };
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ topicId: string }> }): Promise<Metadata> {
     const { topicId } = await params;
@@ -151,10 +145,13 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
 
                 {topic.headerImage && (
                     <div className="relative h-[50vh] w-full mb-8 rounded-xl overflow-hidden shadow-lg">
-                        <img
+                        <Image
                             src={topic.headerImage}
                             alt={topic.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            priority
+                            sizes="(max-width: 1200px) 100vw, 1200px"
                         />
                     </div>
                 )}
@@ -183,7 +180,13 @@ export default async function TopicPage({ params }: { params: Promise<{ topicId:
                             >
                                 {rel.headerImage && (
                                     <div className="relative h-40 w-full mb-4 rounded-xl overflow-hidden">
-                                        <img src={rel.headerImage} alt={rel.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                        <Image
+                                            src={rel.headerImage}
+                                            alt={rel.title}
+                                            fill
+                                            className="object-cover transition-transform group-hover:scale-105"
+                                            sizes="(max-width: 768px) 100vw, 400px"
+                                        />
                                     </div>
                                 )}
                                 <h3 className="font-bold text-gray-900 group-hover:text-accent transition-colors line-clamp-2">{rel.title}</h3>

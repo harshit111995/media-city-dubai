@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Calculator, Lock, Unlock, Plus, MapPin, Trash2, Sparkles, Building2, Calendar, Target, TrendingUp, BarChart4, FileSpreadsheet, ChevronRight, ArrowDownRight, Wallet, Terminal, RotateCcw, Image as ImageIcon } from 'lucide-react';
+import { Lock, Unlock, Plus, MapPin, Trash2, Sparkles, Building2, Calendar, Target, TrendingUp, BarChart4, ArrowDownRight, Wallet, Terminal, RotateCcw } from 'lucide-react';
 import { Cell, Legend, Tooltip as RechartsTooltip } from 'recharts';
 import { Country, City } from 'country-state-city';
 
@@ -136,8 +136,6 @@ export default function MediaPlannerClient() {
         let clicks = null;
         let conversions = null;
         let cpc = row.cpc;
-        let cr = row.cr;
-
         if (config.supportsPerformance) {
             // CTR -> Clicks
             clicks = impressions * ((row.ctr || 0) / 100);
@@ -174,9 +172,6 @@ export default function MediaPlannerClient() {
         // Intent check: Did the User mean "I want $10k in Social" (Locked) 
         // or "I want 10% in Social" (Unlocked)?
 
-        const lockedBudget = currentChannels.filter(c => c.isLocked).reduce((sum, c) => sum + c.budget, 0);
-        const remainingBudget = Math.max(0, newNetBudget - lockedBudget);
-
         return currentChannels.map(ch => {
             if (ch.isLocked) {
                 // If Locked: Dollar budget is fixed. Recalculate % relative to NEW net.
@@ -196,6 +191,7 @@ export default function MediaPlannerClient() {
         if (channels.length > 0) {
             setChannels(prev => balanceBudgets(prev, netMediaBudget));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [netMediaBudget]);
     const handleGrossChange = (val: string) => {
         // Allow empty state for clearing input without "snapping to 0"
@@ -235,7 +231,7 @@ export default function MediaPlannerClient() {
 
         // Filter out channels with 0 weight for this strategy
         const relevantChannels = Object.entries(weights)
-            .filter(([_, weight]) => weight > 0)
+            .filter(([, weight]) => weight > 0)
             .map(([type, weight]) => ({ type: type as ChannelType, weight }));
 
         // Build new rows
@@ -342,15 +338,7 @@ export default function MediaPlannerClient() {
         setChannels(prev => prev.map(ch => ch.id === id ? { ...ch, [field]: value } : ch));
     };
 
-    const handleReset = () => {
-        if (confirm('Are you sure you want to clear the matrix and reset to default?')) {
-            setChannels([]);
-            setGrossInput('1000000');
-            setGrossBudget(1000000);
-            setFeeInput('15');
-            setAgencyFee(15);
-        }
-    };
+
 
     const toggleLock = (id: string) => {
         setChannels(prev => prev.map(ch => ch.id === id ? { ...ch, isLocked: !ch.isLocked } : ch));
@@ -510,7 +498,7 @@ export default function MediaPlannerClient() {
                                                 style={{ width: '100%', backgroundColor: 'transparent', color: '#0f172a', fontWeight: 800, padding: '0 1rem', outline: 'none', cursor: 'pointer', fontSize: '0.875rem', border: 'none', fontFamily: 'inherit' }}
                                                 value={campaignStart}
                                                 onChange={e => setCampaignStart(e.target.value)}
-                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch (err) { } }}
+                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch { } }}
                                             />
                                         </div>
                                         <div className="lunar-input-container" style={{ borderRadius: '9999px', padding: '0.25rem', display: 'flex', alignItems: 'center', minHeight: '56px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
@@ -519,7 +507,7 @@ export default function MediaPlannerClient() {
                                                 style={{ width: '100%', backgroundColor: 'transparent', color: '#0f172a', fontWeight: 800, padding: '0 1rem', outline: 'none', cursor: 'pointer', fontSize: '0.875rem', border: 'none', fontFamily: 'inherit' }}
                                                 value={campaignEnd}
                                                 onChange={e => setCampaignEnd(e.target.value)}
-                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch (err) { } }}
+                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch { } }}
                                             />
                                         </div>
                                     </div>
@@ -714,7 +702,7 @@ export default function MediaPlannerClient() {
                                                                 className="bg-transparent border border-gray-200 rounded-md px-2 py-1 text-xs font-medium text-gray-600 focus:border-red-400 outline-none w-[130px] min-w-[130px] cursor-pointer"
                                                                 value={row.startDate}
                                                                 onChange={(e) => handleDateChange(row.id, 'startDate', e.target.value)}
-                                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch (err) { } }}
+                                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch { } }}
                                                             />
                                                             <span className="text-gray-300 hidden sm:inline">-</span>
                                                             <input
@@ -722,7 +710,7 @@ export default function MediaPlannerClient() {
                                                                 className="bg-transparent border border-gray-200 rounded-md px-2 py-1 text-xs font-medium text-gray-600 focus:border-red-400 outline-none w-[130px] min-w-[130px] cursor-pointer"
                                                                 value={row.endDate}
                                                                 onChange={(e) => handleDateChange(row.id, 'endDate', e.target.value)}
-                                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch (err) { } }}
+                                                                onClick={(e) => { try { if ('showPicker' in e.currentTarget) (e.currentTarget as HTMLInputElement).showPicker(); } catch { } }}
                                                             />
                                                         </div>
                                                     </td>
@@ -1009,7 +997,7 @@ export default function MediaPlannerClient() {
                                                         dataKey="value"
                                                         stroke="none"
                                                         isAnimationActive={true}
-                                                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, value }: any) => {
+                                                        label={({ cx, cy, midAngle, outerRadius, percent, value }: any) => {
                                                             const RADIAN = Math.PI / 180;
                                                             const radius = outerRadius * 1.25;
                                                             const x = cx + radius * Math.cos(-midAngle * RADIAN);

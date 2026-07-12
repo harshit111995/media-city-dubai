@@ -1,17 +1,12 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Globe } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import styles from '@/styles/tools.module.css';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
-
-interface Props {
-    params: {
-        slug: string; // Use slug to match folder structure
-    };
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -138,7 +133,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center font-bold text-2xl text-accent overflow-hidden relative">
                             {tool.imageUrl ? (
-                                <img src={tool.imageUrl} alt={tool.title} className="w-full h-full object-cover" />
+                                <Image src={tool.imageUrl} alt={tool.title} fill className="object-cover" sizes="64px" />
                             ) : (
                                 tool.title.substring(0, 2)
                             )}

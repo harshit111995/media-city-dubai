@@ -38,9 +38,23 @@ export default function KpiDirectoryClient({ initialKpis }: { initialKpis: KpiLi
                         <span className="text-xs font-medium text-red-600 uppercase tracking-widest">AI-Powered Math Matrix</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900 tracking-tight">Business Intelligence</h1>
-                    <p className="text-gray-600 text-lg max-w-xl mx-auto font-medium leading-relaxed">
+                    <p className="text-gray-600 text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8">
                         Specify inputs with standard fields. Our bi-directional solver maps the exact formula you need.
                     </p>
+
+                    {/* Clean Search Input */}
+                    <div className="max-w-md mx-auto relative flex items-center">
+                        <div className="absolute left-4 text-slate-400 pointer-events-none">
+                            <Search className="w-4 h-4" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search KPI calculators (e.g. ROI, CPA, CTR)..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100/50 transition-all font-medium shadow-sm"
+                        />
+                    </div>
                 </div>
             </div>
 

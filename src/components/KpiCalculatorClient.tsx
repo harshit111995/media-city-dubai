@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { Sparkles, MessageSquareCode, Calculator, Terminal, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import '@/styles/kpi.css';
 
 interface KpiField {
@@ -52,6 +51,7 @@ const AnimatedNumber = ({ value, formatFn }: { value: number | null, formatFn: (
         animationRef.current = requestAnimationFrame(animate);
 
         return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
     return <span>{displayValue === 0 && value === null ? '--' : formatFn(displayValue)}</span>;
@@ -79,99 +79,6 @@ const AnimatedNumber = ({ value, formatFn }: { value: number | null, formatFn: (
  * We handle this by passing all known values into the formula as JS vars
  * and solving for the single unknown using equation rearrangement.
  */
-function solveFormula(
-    formula: string,
-    targetVar: string,
-    allVars: { name: string; type: string }[],
-    inputValues: Record<string, number>
-): number | null {
-    try {
-        // Build the known variable map
-        const knownVars: Record<string, number> = {};
-        for (const v of allVars) {
-            if (v.name !== targetVar && inputValues[v.name] !== undefined) {
-                knownVars[v.name] = inputValues[v.name];
-            }
-        }
-
-        // Check we have all required variables
-        const requiredVars = allVars.filter(v => v.name !== targetVar);
-        const hasAll = requiredVars.every(v => knownVars[v.name] !== undefined);
-        if (!hasAll) return null;
-
-        // Strategy 1: If targetVar is the top-level result of the formula,
-        // just set targetVar = eval(formula) with all knowns substituted
-        // Strategy 2: If targetVar appears inside the formula, we need to solve for it
-        // We do this with numeric binary search / Newton's method
-
-        // First check if targetVar appears in the formula
-        const targetInFormula = new RegExp(`\\b${targetVar}\\b`).test(formula);
-
-        if (!targetInFormula) {
-            // Target is the result — just evaluate the formula with all known vars
-            const result = evalWithVars(formula, knownVars);
-            return result;
-        }
-
-        // Target is INSIDE the formula — need to solve for it
-        // We represent the equation as: targetVar = formula(all vars including targetVar)
-        // Which means: find X such that X = formula_with_X
-        // For all our formulas (linear in targetVar), binary search works perfectly
-
-        // Build the objective function: f(x) = formula(x, other_vars) - x = 0
-        // Use bisection over a wide range
-
-        const objFn = (x: number): number => {
-            const vars = { ...knownVars, [targetVar]: x };
-            const fResult = evalWithVars(formula, vars);
-            if (fResult === null) return NaN;
-            return fResult - x;
-        };
-
-        // For equations like "result = a / b" where we solve for b:
-        // We're solving "b = a / b" which gives b^2 = a, b = sqrt(a)
-        // But our formulas are structured as "result_var = formula"
-        // and targetVar is one of the inputs, so the formula doesn't actually contain targetVar
-        // Let me re-examine...
-
-        // Actually: In our formula DB, the formula field is the RHS expression
-        // The full equation is: resultVar = formula(inputs)
-        // targetVar might be resultVar OR one of the inputs
-        // If targetVar is in the inputs (appears in formula), then we need:
-        //   resultVar = formula(targetVar, otherKnowns)
-        //   BUT we know resultVar from the user inputs
-        // So: solve formula(targetVar, otherKnowns) = knownResultVarValue
-
-        // Let's identify the result variable (it's NOT in fields, it's the KPI itself)
-        // Actually allVars includes the result var at the end (added in the parent component)
-        // If targetVar is in the formula, we need the result var's value to solve
-        const resultVar = allVars[allVars.length - 1]; // Last var is the result KPI
-
-        if (resultVar.name !== targetVar) {
-            // targetVar is an INPUT that appears in the formula
-            // We know resultVar's value from user input
-            const knownResultVal = knownVars[resultVar.name];
-            if (knownResultVal === undefined) return null;
-
-            // Solve: formula(targetVar, otherKnowns) = knownResultVal
-            // i.e., evalWithVars(formula, {targetVar: x, ...otherKnowns}) - knownResultVal = 0
-            const obj2 = (x: number): number => {
-                const vars = { ...knownVars, [targetVar]: x };
-                const fResult = evalWithVars(formula, vars);
-                if (fResult === null) return NaN;
-                return fResult - knownResultVal;
-            };
-
-            return bisect(obj2, 1e-12, 1e15, 200);
-        }
-
-        return bisect(objFn, 1e-12, 1e15, 200);
-
-    } catch (e) {
-        console.error('solveFormula error:', e);
-        return null;
-    }
-}
 
 function evalWithVars(expr: string, vars: Record<string, number>): number | null {
     try {
@@ -187,7 +94,6 @@ function evalWithVars(expr: string, vars: Record<string, number>): number | null
                 `(${val})`
             );
         }
-        // eslint-disable-next-line no-eval
         const result = eval(substituted);
         if (typeof result !== 'number' || !isFinite(result) || isNaN(result)) return null;
         return result;
@@ -196,44 +102,14 @@ function evalWithVars(expr: string, vars: Record<string, number>): number | null
     }
 }
 
-function bisect(fn: (x: number) => number, lo: number, hi: number, maxIter: number): number | null {
-    // Try a few different ranges for better coverage
-    const ranges: [number, number][] = [
-        [1e-12, 1e12],
-        [1e-12, 1e9],
-        [0.0001, 999999],
-        [-1e9, -1e-12], // For negative solutions
-    ];
 
-    for (const [rangeLo, rangeHi] of ranges) {
-        const fLo = fn(rangeLo);
-        const fHi = fn(rangeHi);
 
-        if (isNaN(fLo) || isNaN(fHi)) continue;
-        if (Math.sign(fLo) === Math.sign(fHi)) continue; // No root in this range
-
-        let a = rangeLo;
-        let b = rangeHi;
-
-        for (let i = 0; i < maxIter; i++) {
-            const mid = (a + b) / 2;
-            const fMid = fn(mid);
-            if (isNaN(fMid)) break;
-            if (Math.abs(fMid) < 1e-9 || (b - a) / 2 < 1e-12) return mid;
-            if (Math.sign(fMid) === Math.sign(fn(a))) a = mid;
-            else b = mid;
-        }
-        return (a + b) / 2;
-    }
-    return null;
-}
-
-export default function KpiCalculatorClient({ title, formula, description, fields }: KpiCalculatorClientProps) {
+export default function KpiCalculatorClient({ title, formula, fields }: KpiCalculatorClientProps) {
     const resultVarName = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
     const isLikelyPercentage = title.toLowerCase().includes('rate') || title.toLowerCase().includes('margin') || title.toLowerCase().includes('roi') || title.toLowerCase().includes('%') || formula.includes('* 100') || formula.includes('/ 100');
 
-    const allVariables: KpiField[] = [
+    const allVariables: KpiField[] = useMemo(() => [
         ...fields.map(f => {
             if (f.type !== 'currency') {
                 const l = f.label.toLowerCase();
@@ -248,7 +124,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
             label: title,
             type: title.toLowerCase().includes('cost') || title.toLowerCase().includes('value') || title.toLowerCase().includes('revenue') || title.toLowerCase().includes('spend') || title.toLowerCase().includes('ltv') || title.toLowerCase().includes('cpa') || title.toLowerCase().includes('cpc') || title.toLowerCase().includes('cpm') || title.toLowerCase().includes('cac') ? 'currency' : isLikelyPercentage ? 'percentage' : 'number'
         }
-    ];
+    ], [fields, resultVarName, title, isLikelyPercentage]);
 
     const [targetVariable, setTargetVariable] = useState<string>(resultVarName);
     const [inputs, setInputs] = useState<Record<string, string>>({});
@@ -280,6 +156,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
             if (hasChanged) setInputs(newInputs);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nlpString, inputMode, targetVariable]);
 
     const handleInputChange = (name: string, value: string) => {
@@ -295,7 +172,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
             // Build numeric values map (handle percentage types by dividing by 100 if needed)
             const numericInputs: Record<string, number> = {};
             for (const v of inputFields) {
-                let val = parseFloat(inputs[v.name] || '0');
+                const val = parseFloat(inputs[v.name] || '0');
                 // Percentages stored as e.g. "2.5" for 2.5% — keep as-is for formula evaluation
                 // because formulas like ctr = clicks/impressions already expect raw ratios
                 // Only divide by 100 if the variable type is percentage AND the formula doesn't do its own * 100
@@ -356,7 +233,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
         }
     }, [inputs, targetVariable, formula, allVariables]);
 
-    const formatCurrencySymbol = () => {
+    const formatCurrencySymbol = useCallback(() => {
         switch (currencyCode) {
             case 'USD': return '$';
             case 'EUR': return '€';
@@ -365,12 +242,12 @@ export default function KpiCalculatorClient({ title, formula, description, field
             case 'AED': return 'د.إ';
             default: return '$';
         }
-    };
+    }, [currencyCode]);
 
     const targetField = allVariables.find(v => v.name === targetVariable);
     const inputFields = allVariables.filter(v => v.name !== targetVariable);
 
-    const formatter = (val: number | null) => {
+    const formatter = useCallback((val: number | null) => {
         if (val === null) return '--';
         if (targetField?.type === 'currency') {
             return `${formatCurrencySymbol()}${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -379,7 +256,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
             return `${val.toFixed(2)}%`;
         }
         return val.toLocaleString('en-US', { maximumFractionDigits: 4 });
-    };
+    }, [targetField, formatCurrencySymbol]);
 
     const magicSentence = useMemo(() => {
         if (calculatedValue === null) return 'Awaiting sufficient data parameters to solve...';
@@ -390,7 +267,7 @@ export default function KpiCalculatorClient({ title, formula, description, field
         if (tvLabel.toLowerCase().includes('rate') || tvLabel.toLowerCase().includes('%') || tvLabel.toLowerCase().includes('margin')) return `The resulting efficiency or conversion rate is ${fmtd}.`;
         if (tvLabel.toLowerCase().includes('impression') || tvLabel.toLowerCase().includes('click') || tvLabel.toLowerCase().includes('action') || tvLabel.toLowerCase().includes('user')) return `You must generate ${fmtd} volume to hit these metrics.`;
         return `The isolated target variable resolved to ${fmtd}.`;
-    }, [calculatedValue, targetField, currencyCode]);
+    }, [calculatedValue, targetField, formatter]);
 
     return (
         <div className="lunar-bg font-sans pt-6 pb-12 text-slate-800">
@@ -670,7 +547,6 @@ function algebraicSolve(
 function evalPlaceholder(expr: string, placeholder: string, val: number): number | null {
     try {
         const substituted = expr.replace(new RegExp(placeholder.replace('__', '\\__'), 'g'), `(${val})`);
-        // eslint-disable-next-line no-eval
         const result = eval(substituted);
         if (typeof result !== 'number' || !isFinite(result) || isNaN(result)) return null;
         return result;

@@ -9,7 +9,6 @@ import {
   Italic, 
   List, 
   ListOrdered, 
-  Quote, 
   Undo, 
   Redo, 
   Link as LinkIcon, 
