@@ -4,6 +4,14 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+function isRedirectError(error: any): boolean {
+    return (
+        error instanceof Error && 
+        (error.message === 'NEXT_REDIRECT' || 
+         (typeof (error as any).digest === 'string' && (error as any).digest.startsWith('NEXT_REDIRECT')))
+    );
+}
+
 import { uploadFileToS3 } from '@/lib/s3';
 
 
@@ -57,6 +65,7 @@ export async function createPost(formData: FormData) {
         revalidatePath(`/forum/category/${category}`);
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to create post:", error);
         throw new Error("Failed to create post. Please try again.");
     }
@@ -111,6 +120,7 @@ export async function updatePost(id: string, formData: FormData) {
         revalidatePath(`/forum/category/${updatedPost.category}`);
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to update post:", error);
         throw new Error("Failed to update post. Please try again.");
     }
@@ -181,6 +191,7 @@ export async function createEvent(formData: FormData) {
         revalidatePath(`/events/${slug}`);
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to create event:", error);
         throw new Error("Failed to create event. Please try again.");
     }
@@ -236,6 +247,7 @@ export async function updateEvent(id: string, formData: FormData) {
         revalidatePath(`/events/${updatedEvent.slug}`);
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to update event:", error);
         throw new Error("Failed to update event. Please try again.");
     }
@@ -299,6 +311,7 @@ export async function createTool(formData: FormData) {
         revalidatePath(`/tools/category/${category}`);
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to create tool:", error);
         throw new Error("Failed to create tool. Please check your inputs and try again.");
     }
@@ -347,6 +360,7 @@ export async function updateTool(id: string, formData: FormData) {
         revalidatePath(`/tools/category/${updatedTool.category}`);
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to update tool:", error);
         throw new Error("Failed to update tool. Please check your inputs and try again.");
     }
@@ -400,6 +414,7 @@ export async function createKpi(formData: FormData) {
         revalidatePath('/kpi');
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to create KPI:", error);
         throw new Error("Failed to create KPI calculator. Ensure JSON fields are valid.");
     }
@@ -437,6 +452,7 @@ export async function updateKpi(id: string, formData: FormData) {
         revalidatePath('/kpi');
         redirect('/admin');
     } catch (error) {
+        if (isRedirectError(error)) throw error;
         console.error("Failed to update KPI:", error);
         throw new Error("Failed to update KPI calculator. Ensure JSON fields are valid.");
     }
