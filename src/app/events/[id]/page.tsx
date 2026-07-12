@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Calendar, MapPin, ArrowLeft, Clock, User } from 'lucide-react';
-import styles from '@/styles/events.module.css';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
