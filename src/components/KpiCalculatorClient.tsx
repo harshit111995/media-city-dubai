@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import '@/styles/kpi.css';
 
 interface KpiField {
@@ -16,79 +16,12 @@ interface KpiCalculatorClientProps {
     fields: KpiField[];
 }
 
-// Animated number counter component
-const AnimatedNumber = ({ value, formatFn }: { value: number | null, formatFn: (val: number | null) => string }) => {
-    const [displayValue, setDisplayValue] = useState<number>(0);
-    const animationRef = useRef<number>(0);
-    const startValueRef = useRef<number>(0);
-    const startTimeRef = useRef<number | null>(null);
-
-    useEffect(() => {
-        if (value === null) {
-            setDisplayValue(0);
-            return;
-        }
-
-        const targetValue = value;
-        startValueRef.current = displayValue;
-        startTimeRef.current = performance.now();
-        const duration = 600;
-
-        const animate = (time: number) => {
-            if (!startTimeRef.current) startTimeRef.current = time;
-            const progress = Math.min((time - startTimeRef.current) / duration, 1);
-            const easeProgress = 1 - Math.pow(1 - progress, 3);
-            const current = startValueRef.current + (targetValue - startValueRef.current) * easeProgress;
-            setDisplayValue(current);
-            if (progress < 1) {
-                animationRef.current = requestAnimationFrame(animate);
-            } else {
-                setDisplayValue(targetValue);
-            }
-        };
-
-        if (animationRef.current) cancelAnimationFrame(animationRef.current);
-        animationRef.current = requestAnimationFrame(animate);
-
-        return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value]);
-
-    return <span>{displayValue === 0 && value === null ? '--' : formatFn(displayValue)}</span>;
-};
-
-/**
- * Direct arithmetic solver: substitutes all known variables into the formula
- * and solves for the unknown using eval() on the rearranged expression.
- *
- * Approach:
- *  1. For "target = formula" — just evaluate rhs with known vars
- *  2. For "target is IN formula" — rearrange algebraically via substitution
- *    The trick: substitute ALL known vars into the formula string, then
- *    use numeric iteration (Newton's method or binary search) to find
- *    the value for targetVar that satisfies: targetVar = formula_result
- *    But simpler: since all our formulas are single-expression, we can
- *    evaluate the formula symbolically by setting targetVar to a variable
- *    and solving algebraically using the known = rhs equation.
- *
- * For formulas like: result = a / b * 1000
- *  - Solve for result: eval(a/b*1000)
- *  - Solve for a: a = result * b / 1000
- *  - Solve for b: b = a * 1000 / result
- *
- * We handle this by passing all known values into the formula as JS vars
- * and solving for the single unknown using equation rearrangement.
- */
-
 function evalWithVars(expr: string, vars: Record<string, number>): number | null {
     try {
-        // Replace variable names with their values
-        // Sort by length descending to avoid partial replacements (e.g., "total_spend" before "spend")
         const sortedKeys = Object.keys(vars).sort((a, b) => b.length - a.length);
         let substituted = expr;
         for (const key of sortedKeys) {
             const val = vars[key];
-            // Use word boundary replacement
             substituted = substituted.replace(
                 new RegExp(`\\b${key}\\b`, 'g'),
                 `(${val})`
@@ -102,11 +35,8 @@ function evalWithVars(expr: string, vars: Record<string, number>): number | null
     }
 }
 
-
-
 export default function KpiCalculatorClient({ title, formula, fields }: KpiCalculatorClientProps) {
     const resultVarName = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
-
     const isLikelyPercentage = title.toLowerCase().includes('rate') || title.toLowerCase().includes('margin') || title.toLowerCase().includes('roi') || title.toLowerCase().includes('%') || formula.includes('* 100') || formula.includes('/ 100');
 
     const allVariables: KpiField[] = useMemo(() => [
@@ -126,98 +56,164 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
         }
     ], [fields, resultVarName, title, isLikelyPercentage]);
 
-    const [targetVariable, setTargetVariable] = useState<string>(resultVarName);
     const [inputs, setInputs] = useState<Record<string, string>>({});
+    const [inputHistory, setInputHistory] = useState<string[]>([]);
+    const [calculatedField, setCalculatedField] = useState<string | null>(null);
     const [currencyCode, setCurrencyCode] = useState('USD');
     const [inputMode, setInputMode] = useState<'standard' | 'nlp'>('standard');
     const [nlpString, setNlpString] = useState('');
     const [activeInput, setActiveInput] = useState<string | null>(null);
 
+    // Solve for a specific input variable
+    const solveForVariable = useCallback((targetVarName: string, currentInputs: Record<string, string>): number | null => {
+        const otherInputs: Record<string, number> = {};
+        allVariables.forEach(v => {
+            if (v.name !== targetVarName && currentInputs[v.name] !== undefined && currentInputs[v.name] !== '') {
+                let val = parseFloat(currentInputs[v.name]);
+                if (v.type === 'percentage' && !formula.includes('* 100') && !formula.includes('*100')) {
+                    val = val / 100;
+                }
+                otherInputs[v.name] = val;
+            }
+        });
+
+        if (targetVarName === resultVarName) {
+            return evalWithVars(formula, otherInputs);
+        } else {
+            const resultVal = otherInputs[resultVarName];
+            if (resultVal === undefined) return null;
+
+            const knownInputs = { ...otherInputs };
+            delete knownInputs[resultVarName];
+
+            return solveForInput(formula, targetVarName, knownInputs, resultVal);
+        }
+    }, [allVariables, formula, resultVarName]);
+
+    const formatSolveValue = useCallback((val: number, targetVar: KpiField): string => {
+        if (targetVar.type === 'percentage' && !formula.includes('* 100') && !formula.includes('*100')) {
+            val = val * 100;
+        }
+        if (Number.isInteger(val)) {
+            return val.toString();
+        }
+        return parseFloat(val.toFixed(4)).toString();
+    }, [formula]);
+
+    // Handle user parameter entry
+    const handleValChange = useCallback((varName: string, valStr: string) => {
+        const nextInputs = { ...inputs };
+        
+        if (valStr === '') {
+            delete nextInputs[varName];
+            const nextHistory = inputHistory.filter(h => h !== varName);
+            setInputHistory(nextHistory);
+            
+            if (calculatedField) {
+                delete nextInputs[calculatedField];
+                setCalculatedField(null);
+            }
+            setInputs(nextInputs);
+            return;
+        }
+
+        nextInputs[varName] = valStr;
+        const nextHistory = inputHistory.filter(h => h !== varName);
+        nextHistory.unshift(varName);
+
+        const filledVars = allVariables.filter(v => nextInputs[v.name] !== undefined && nextInputs[v.name] !== '');
+        const N = allVariables.length;
+
+        if (filledVars.length < N - 1) {
+            setInputs(nextInputs);
+            setInputHistory(nextHistory);
+            setCalculatedField(null);
+            return;
+        }
+
+        if (filledVars.length === N - 1) {
+            const targetVar = allVariables.find(v => nextInputs[v.name] === undefined || nextInputs[v.name] === '')!;
+            const solvedVal = solveForVariable(targetVar.name, nextInputs);
+            if (solvedVal !== null) {
+                nextInputs[targetVar.name] = formatSolveValue(solvedVal, targetVar);
+                setCalculatedField(targetVar.name);
+            } else {
+                setCalculatedField(null);
+            }
+            setInputs(nextInputs);
+            setInputHistory(nextHistory);
+            return;
+        }
+
+        if (filledVars.length === N) {
+            const targetVarName = nextHistory[nextHistory.length - 1];
+            const targetVar = allVariables.find(v => v.name === targetVarName)!;
+            const solvedVal = solveForVariable(targetVarName, nextInputs);
+            if (solvedVal !== null) {
+                nextInputs[targetVarName] = formatSolveValue(solvedVal, targetVar);
+                setCalculatedField(targetVarName);
+            } else {
+                setCalculatedField(null);
+            }
+            setInputs(nextInputs);
+            setInputHistory(nextHistory);
+            return;
+        }
+    }, [inputs, inputHistory, calculatedField, allVariables, solveForVariable, formatSolveValue]);
+
     // Natural Language Parser
     useEffect(() => {
         if (inputMode === 'nlp' && nlpString.trim() !== '') {
-            const newInputs = { ...inputs };
+            const nextInputs = { ...inputs };
+            let nextHistory = [...inputHistory];
             let hasChanged = false;
             const text = nlpString.toLowerCase();
 
             allVariables.forEach(v => {
-                if (v.name === targetVariable) return;
                 const regex1 = new RegExp(`${v.name.replace('_', ' ')}\\s*(?:is|was|=|:)?\\s*\\$?\\s*([\\d,.]+)`, 'i');
                 const regex2 = new RegExp(`\\$?\\s*([\\d,.]+)\\s*(?:for|in)?\\s*${v.name.replace('_', ' ')}`, 'i');
                 const match = text.match(regex1) || text.match(regex2);
                 if (match && match[1]) {
                     const parsedVal = match[1].replace(/,/g, '');
-                    if (!isNaN(parseFloat(parsedVal)) && newInputs[v.name] !== parsedVal) {
-                        newInputs[v.name] = parsedVal;
+                    if (!isNaN(parseFloat(parsedVal)) && nextInputs[v.name] !== parsedVal) {
+                        nextInputs[v.name] = parsedVal;
+                        nextHistory = nextHistory.filter(h => h !== v.name);
+                        nextHistory.unshift(v.name);
                         hasChanged = true;
                     }
                 }
             });
 
-            if (hasChanged) setInputs(newInputs);
+            if (hasChanged) {
+                const filledVars = allVariables.filter(v => nextInputs[v.name] !== undefined && nextInputs[v.name] !== '');
+                const N = allVariables.length;
+                if (filledVars.length === N - 1) {
+                    const targetVar = allVariables.find(v => nextInputs[v.name] === undefined || nextInputs[v.name] === '')!;
+                    const solvedVal = solveForVariable(targetVar.name, nextInputs);
+                    if (solvedVal !== null) {
+                        nextInputs[targetVar.name] = formatSolveValue(solvedVal, targetVar);
+                        setCalculatedField(targetVar.name);
+                    }
+                }
+                setInputs(nextInputs);
+                setInputHistory(nextHistory);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nlpString, inputMode, targetVariable]);
+    }, [nlpString, inputMode]);
 
-    const handleInputChange = (name: string, value: string) => {
-        setInputs(prev => ({ ...prev, [name]: value }));
-    };
+    const targetField = allVariables.find(v => v.name === calculatedField);
 
     const calculatedValue = useMemo(() => {
-        try {
-            const inputFields = allVariables.filter(v => v.name !== targetVariable);
-            const hasAllRequired = inputFields.every(v => inputs[v.name] && inputs[v.name] !== '');
-            if (!hasAllRequired) return null;
-
-            // Build numeric values map (handle percentage types by dividing by 100 if needed)
-            const numericInputs: Record<string, number> = {};
-            for (const v of inputFields) {
-                const val = parseFloat(inputs[v.name] || '0');
-                // Percentages stored as e.g. "2.5" for 2.5% — keep as-is for formula evaluation
-                // because formulas like ctr = clicks/impressions already expect raw ratios
-                // Only divide by 100 if the variable type is percentage AND the formula doesn't do its own * 100
-                numericInputs[v.name] = val;
-            }
-
-            // The result variable name is the last in allVariables
-            const resultVar = allVariables[allVariables.length - 1];
-
-            let result: number | null = null;
-
-            if (targetVariable === resultVar.name) {
-                // Solving for the KPI result: just evaluate the formula with all input values
-                result = evalWithVars(formula, numericInputs);
-            } else {
-                // Solving for one of the inputs: we know the KPI result and need to find the input
-                // The result var must be provided by the user
-                const knownResultVal = parseFloat(inputs[resultVar.name] || '');
-                if (isNaN(knownResultVal)) return null;
-
-                // Use direct algebraic rearrangement
-                result = solveForInput(formula, targetVariable, numericInputs, knownResultVal);
-            }
-
-            if (result === null || isNaN(result) || !isFinite(result)) return null;
-
-            // Apply percentage scaling for display if the result type is percentage
-            // and the formula doesn't already multiply by 100
-            const targetFieldInfo = allVariables.find(v => v.name === targetVariable);
-            if (targetFieldInfo?.type === 'percentage' && !formula.includes('* 100') && !formula.includes('*100')) {
-                result = result * 100;
-            }
-
-            return result;
-
-        } catch (error) {
-            console.error('Calculation failed:', error);
-            return null;
-        }
-    }, [inputs, targetVariable, formula, allVariables]);
+        if (!calculatedField || !inputs[calculatedField]) return null;
+        return parseFloat(inputs[calculatedField]);
+    }, [inputs, calculatedField]);
 
     const liveEquationTrace = useMemo(() => {
+        if (!calculatedField) return formula;
         try {
-            const targetLabel = allVariables.find(v => v.name === targetVariable)?.label || targetVariable;
-            const inputFields = allVariables.filter(v => v.name !== targetVariable);
+            const targetLabel = targetField?.label || calculatedField;
+            const inputFields = allVariables.filter(v => v.name !== calculatedField);
             let trace = `${targetLabel} = ${formula}`;
 
             inputFields.forEach(v => {
@@ -231,7 +227,7 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
         } catch {
             return formula;
         }
-    }, [inputs, targetVariable, formula, allVariables]);
+    }, [inputs, calculatedField, formula, allVariables, targetField]);
 
     const formatCurrencySymbol = useCallback(() => {
         switch (currencyCode) {
@@ -243,9 +239,6 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
             default: return '$';
         }
     }, [currencyCode]);
-
-    const targetField = allVariables.find(v => v.name === targetVariable);
-    const inputFields = allVariables.filter(v => v.name !== targetVariable);
 
     const formatter = useCallback((val: number | null) => {
         if (val === null) return '--';
@@ -259,7 +252,7 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
     }, [targetField, formatCurrencySymbol]);
 
     const magicSentence = useMemo(() => {
-        if (calculatedValue === null) return 'Awaiting sufficient data parameters to solve...';
+        if (calculatedValue === null || !targetField) return 'Awaiting sufficient data parameters to solve...';
         const fmtd = formatter(calculatedValue);
         const tvLabel = targetField?.label || 'Value';
         if (tvLabel.toLowerCase().includes('spend') || tvLabel.toLowerCase().includes('cost')) return `You need to allocate ${fmtd} to achieve this target.`;
@@ -270,105 +263,81 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
     }, [calculatedValue, targetField, formatter]);
 
     return (
-        <div className="lunar-bg font-sans pt-6 pb-12 text-slate-800">
+        <div className="lunar-bg font-sans pt-4 pb-12 text-slate-800">
             <div className="max-w-3xl mx-auto w-full px-4">
                 <div className="lunar-shell p-6 md:p-8 relative overflow-hidden border border-slate-100 rounded-2xl bg-white shadow-sm">
 
-                    {/* Header */}
-                    <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100 gap-4">
+                    {/* Title Header */}
+                    <div className="mb-6 pb-4 border-b border-slate-100 flex justify-between items-center">
                         <div>
-                            <h1 className="text-base font-bold text-slate-900 uppercase tracking-wider">{title}</h1>
-                            <p className="text-[10px] text-slate-400 font-mono tracking-tight uppercase">Bidirectional Calculator</p>
+                            <h1 className="text-lg font-bold text-slate-900">{title}</h1>
+                            <p className="text-xs text-slate-400 font-mono">Omni-directional dynamic math engine</p>
                         </div>
+                        <button onClick={() => { setInputs({}); setInputHistory([]); setCalculatedField(null); }} className="kpi-clear-btn">
+                            <span>Reset</span>
+                        </button>
                     </div>
 
                     {/* Mode Toggles */}
                     <div className="kpi-toggle-container mb-6">
                         <button onClick={() => setInputMode('standard')} className={`kpi-toggle-btn ${inputMode === 'standard' ? 'active' : ''}`}>
-                            Structured Input
+                            Interactive Fields
                         </button>
                         <button onClick={() => setInputMode('nlp')} className={`kpi-toggle-btn ${inputMode === 'nlp' ? 'active' : ''}`}>
                             Natural Language AI
                         </button>
                     </div>
 
-                    {/* Centered Result Display */}
-                    <div className="mb-8 py-6 text-center border-b border-slate-100">
-                        <span className="text-[10px] font-bold tracking-widest uppercase text-red-600 bg-red-50/80 px-3 py-1 rounded-full border border-red-100">
-                            Calculated {targetField?.label}
-                        </span>
-                        
-                        <div className="my-3 relative inline-flex items-center justify-center">
-                            <div className="lunar-massive-text !text-red-600 !font-extrabold tracking-tight">
-                                <AnimatedNumber value={calculatedValue} formatFn={formatter} />
-                            </div>
-                        </div>
-
-                        <div className="mt-2">
-                            <span className="px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-md inline-block font-mono text-[9px] text-slate-400">
-                                Equation: {liveEquationTrace}
-                            </span>
-                        </div>
-                    </div>
-
                     {/* Inputs */}
                     <div className="space-y-6">
 
-                        {/* Target Selector Tabs */}
-                        <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Solve For</span>
-                            <div className="kpi-pills-container w-full">
-                                {allVariables.map(field => {
-                                    const isActive = targetVariable === field.name;
-                                    return (
-                                        <button
-                                            key={`sel-${field.name}`}
-                                            onClick={() => {
-                                                setTargetVariable(field.name);
-                                                const newInputs = { ...inputs };
-                                                delete newInputs[field.name];
-                                                setInputs(newInputs);
-                                            }}
-                                            className={`kpi-logic-pill ${isActive ? 'active' : ''}`}
-                                        >
-                                            <span>{field.label}</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Input Fields Grid */}
                         {inputMode === 'standard' ? (
-                            <div className="space-y-5">
-                                <div className="space-y-5">
-                                    {inputFields.map((field) => (
-                                        <div key={`in-${field.name}`} className="flex flex-col w-full">
-                                            <div className="flex justify-between items-center mb-1.5">
-                                                <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                            <div className="space-y-4">
+                                {allVariables.map((field) => {
+                                    const isCalc = calculatedField === field.name;
+                                    const isFocused = activeInput === field.name;
+                                    return (
+                                        <div 
+                                            key={`field-${field.name}`}
+                                            className={`flex items-center justify-between border rounded-xl px-4 py-3.5 transition-all bg-white relative ${
+                                                isCalc 
+                                                    ? 'border-emerald-200 bg-emerald-50/10' 
+                                                    : isFocused 
+                                                        ? 'border-red-500 ring-4 ring-red-50' 
+                                                        : 'border-slate-200 hover:border-slate-300'
+                                            }`}
+                                        >
+                                            {/* Label Area */}
+                                            <div className="flex flex-col">
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider ${isCalc ? 'text-emerald-700' : 'text-slate-400'}`}>
                                                     {field.label}
-                                                    {field.name.toLowerCase().includes('cpm') && (
-                                                        <span className="w-3.5 h-3.5 rounded-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400 border border-slate-200 cursor-help" title="Cost per mille (thousand) impressions">i</span>
-                                                    )}
                                                 </span>
-                                                <span className="text-slate-400 hover:text-slate-600 cursor-pointer text-xs font-bold leading-none">•••</span>
+                                                {isCalc && (
+                                                    <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md mt-0.5 w-fit uppercase">
+                                                        Calculated
+                                                    </span>
+                                                )}
                                             </div>
-                                            <div className={`flex items-center justify-between border rounded-xl px-4 py-3.5 transition-all bg-white relative ${activeInput === field.name ? 'border-red-500 ring-4 ring-red-50' : 'border-slate-200 hover:border-slate-300'}`}>
+
+                                            {/* Input Value & Unit Selector */}
+                                            <div className="flex items-center gap-2">
                                                 <input
                                                     type="number"
-                                                    className="w-full bg-transparent border-none text-base font-semibold text-slate-800 placeholder-slate-300 outline-none p-0 focus:ring-0"
+                                                    className={`bg-transparent border-none text-right text-lg font-bold outline-none p-0 focus:ring-0 w-[140px] ${
+                                                        isCalc ? 'text-emerald-700 font-extrabold' : 'text-slate-800'
+                                                    }`}
                                                     placeholder="0"
                                                     value={inputs[field.name] || ''}
-                                                    onChange={(e) => handleInputChange(field.name, e.target.value)}
+                                                    onChange={(e) => handleValChange(field.name, e.target.value)}
                                                     onFocus={(e) => { setActiveInput(field.name); e.target.select(); }}
                                                     onBlur={() => setActiveInput(null)}
                                                 />
                                                 {field.type === 'currency' && (
-                                                    <div className="relative flex items-center text-xs text-red-600 font-bold border-l pl-3 ml-2 border-slate-200">
+                                                    <div className="relative flex items-center text-xs text-slate-500 font-bold border-l pl-2.5 ml-1.5 border-slate-200">
                                                         <select
                                                             value={currencyCode}
                                                             onChange={(e) => setCurrencyCode(e.target.value)}
-                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-4 text-red-600 font-bold"
+                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-3.5 text-slate-600 font-bold"
                                                         >
                                                             <option value="AED">AED</option>
                                                             <option value="USD">USD</option>
@@ -376,22 +345,16 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                                             <option value="GBP">GBP</option>
                                                             <option value="INR">INR</option>
                                                         </select>
-                                                        <span className="text-[8px] text-red-500 pointer-events-none absolute right-0">▼</span>
+                                                        <span className="text-[7px] text-slate-400 pointer-events-none absolute right-0">▼</span>
                                                     </div>
                                                 )}
                                                 {field.type === 'percentage' && (
-                                                    <span className="text-slate-400 font-bold text-sm ml-2">%</span>
+                                                    <span className="text-slate-400 font-bold text-sm ml-1.5">%</span>
                                                 )}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-
-                                <div className="flex justify-end">
-                                    <button onClick={() => setInputs({})} className="kpi-clear-btn">
-                                        <span>Reset Parameters</span>
-                                    </button>
-                                </div>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="lunar-textarea p-4 border border-slate-200 bg-slate-50/50">
@@ -403,22 +366,30 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                 />
                                 <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center text-[10px] font-medium text-slate-400">
                                     <span>AI Mapping Active</span>
-                                    <span>Detected: {Object.values(inputs).filter(v => v !== '').length} / {inputFields.length}</span>
+                                    <span>Detected: {Object.values(inputs).filter(v => v !== '').length} / {allVariables.length}</span>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Minimal Info Box */}
+                    {/* Context Explanation Card */}
                     <div className="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl mt-8 text-xs text-slate-600 leading-relaxed shadow-sm">
                         <div className="flex gap-3 items-start">
                             <span className="text-red-600 text-sm font-bold mt-0.5">ℹ</span>
                             <div>
                                 <p className="font-bold text-slate-800 text-sm mb-1">
-                                    Formula Context & Meaning
+                                    Equation System Matrix
+                                </p>
+                                <p className="font-mono text-[9px] text-slate-400 mb-2">
+                                    Formula: {resultVarName} = {formula}
+                                    {calculatedField && (
+                                        <span className="block mt-1.5 text-slate-500 font-semibold bg-white border border-slate-100 rounded px-1.5 py-0.5 w-fit">
+                                            Active Trace: {liveEquationTrace}
+                                        </span>
+                                    )}
                                 </p>
                                 <p className="font-medium text-slate-600">
-                                    {magicSentence}
+                                    {calculatedField && calculatedValue !== null ? magicSentence : 'Fill in any parameters above to solve the equation matrix automatically in real-time.'}
                                 </p>
                             </div>
                         </div>
@@ -428,8 +399,6 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
         </div>
     );
 }
-
-
 
 /**
  * Solve for a specific input variable given that we know the result.
@@ -442,7 +411,6 @@ function solveForInput(
     knownInputs: Record<string, number>,  // excludes targetVar AND the result var
     resultVal: number
 ): number | null {
-    // f(x) = evalWithVars(formula, {...knownInputs, targetVar: x}) - resultVal = 0
     const obj = (x: number): number => {
         const vars = { ...knownInputs, [targetVar]: x };
         const fResult = evalWithVars(formula, vars);
@@ -450,7 +418,6 @@ function solveForInput(
         return fResult - resultVal;
     };
 
-    // Try bisection over multiple ranges
     const ranges: [number, number][] = [
         [1e-10, 1e12],
         [1e-6, 1e9],
@@ -478,17 +445,9 @@ function solveForInput(
         return (a + b) / 2;
     }
 
-    // Fallback: try algebraic direct solve for simple linear formulas
-    // e.g., "spend / clicks" → clicks = spend / result
     return algebraicSolve(formula, targetVar, knownInputs, resultVal);
 }
 
-/**
- * Algebraic direct solver for simple formulas.
- * Handles patterns like: a / b → for b: b = a / result; for a: a = result * b
- * a * b → for b: b = result / a; for a: a = result / b
- * (a / b) * 1000 → for a: a = result * b / 1000; for b: b = a * 1000 / result
- */
 function algebraicSolve(
     formula: string,
     targetVar: string,
@@ -496,48 +455,33 @@ function algebraicSolve(
     resultVal: number
 ): number | null {
     try {
-        // Substitute all known variables leaving targetVar as T
         const sortedKeys = Object.keys(knownInputs).sort((a, b) => b.length - a.length);
         let expr = formula;
         for (const key of sortedKeys) {
             expr = expr.replace(new RegExp(`\\b${key}\\b`, 'g'), `(${knownInputs[key]})`);
         }
 
-        // Now expr contains only targetVar and numbers
-        // Replace targetVar with a unique placeholder
         const ph = '__T__';
         expr = expr.replace(new RegExp(`\\b${targetVar}\\b`, 'g'), ph);
 
-        // Try values to find where expr = resultVal
-        // For linear: if expr is something like (1000) * __T__ / (2) we can solve directly
-        // Let's try: if it's linear in T, f(1) and f(2) give us the slope
         const f1 = evalPlaceholder(expr, ph, 1);
         const f2 = evalPlaceholder(expr, ph, 2);
         if (f1 === null || f2 === null) return null;
 
-        // Assume linear: (f2 - f1) is the slope
-        // f(T) = f1 + (f2 - f1) * (T - 1) = resultVal
-        // T = 1 + (resultVal - f1) / (f2 - f1)
         const slope = f2 - f1;
         if (Math.abs(slope) < 1e-15) return null;
         const T = 1 + (resultVal - f1) / slope;
 
-        // Verify
         const verify = evalPlaceholder(expr, ph, T);
         if (verify !== null && Math.abs(verify - resultVal) < 0.01) return T;
 
-        // Not linear - try for T^2 pattern (quadratic)
         const f4 = evalPlaceholder(expr, ph, 4);
         if (f4 === null) return null;
 
-        // If quadratic: f(T) = a*T^2 + b*T + c = resultVal
-        // f(1) = a + b + c, f(2) = 4a + 2b + c, f(4) = 16a + 4b + c
-        // Solve the 3x3 system vs resultVal
         const c_val = f1 - 2 * (f2 - f1) + (f4 - 2 * f2 + f1) / 2;
         const b_val = (f2 - f1) - 3 * (f4 - 2 * f2 + f1) / 6;
         const a_val = (f4 - 2 * f2 + f1) / 6;
 
-        // Quadratic formula: a*T^2 + b*T + (c - resultVal) = 0
         const A = a_val, B = b_val, C = c_val - resultVal;
         const disc = B * B - 4 * A * C;
         if (disc < 0 || Math.abs(A) < 1e-15) return null;
@@ -545,7 +489,6 @@ function algebraicSolve(
         const root1 = (-B + Math.sqrt(disc)) / (2 * A);
         const root2 = (-B - Math.sqrt(disc)) / (2 * A);
 
-        // Return the positive root
         const validRoot = [root1, root2].find(r => r > 0 && isFinite(r));
         return validRoot ?? null;
 
