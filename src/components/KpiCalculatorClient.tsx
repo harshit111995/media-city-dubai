@@ -64,19 +64,6 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
     const [nlpString, setNlpString] = useState('');
     const [activeInput, setActiveInput] = useState<string | null>(null);
 
-    // Keyboard support: Escape key resets fields
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                setInputs({});
-                setInputHistory([]);
-                setCalculatedField(null);
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
-
     // Solve for a specific input variable
     const solveForVariable = useCallback((targetVarName: string, currentInputs: Record<string, string>): number | null => {
         const otherInputs: Record<string, number> = {};
@@ -276,129 +263,81 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
     }, [calculatedValue, targetField, formatter]);
 
     return (
-        <div className="font-sans pt-4 pb-12 bg-slate-950 text-slate-100 rounded-3xl overflow-hidden border border-slate-900 shadow-2xl">
-            <div className="max-w-2xl mx-auto w-full px-6">
-                
-                {/* Visual Glassmorphic Shell */}
-                <div className="bg-slate-900/60 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 md:p-8 relative shadow-2xl shadow-black/40">
-                    
-                    {/* Header */}
-                    <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-800/60 gap-4">
+        <div className="lunar-bg font-sans pt-4 pb-12 text-slate-800">
+            <div className="max-w-3xl mx-auto w-full px-4">
+                <div className="lunar-shell p-6 md:p-8 relative overflow-hidden border border-slate-100 rounded-2xl bg-white shadow-sm">
+
+                    {/* Title Header */}
+                    <div className="mb-6 pb-4 border-b border-slate-100 flex justify-between items-center">
                         <div>
-                            <h2 className="text-xl font-bold tracking-tight text-white">{title}</h2>
-                            <p className="text-xs text-slate-400 font-medium">Modern Minimalist Solver</p>
+                            <h1 className="text-lg font-bold text-slate-900">{title}</h1>
+                            <p className="text-xs text-slate-400 font-mono">Omni-directional dynamic math engine</p>
                         </div>
-                        <button 
-                            onClick={() => { setInputs({}); setInputHistory([]); setCalculatedField(null); }}
-                            className="text-xs font-bold text-red-400 hover:text-red-300 bg-red-950/30 border border-red-900/40 px-3.5 py-1.5 rounded-xl transition-all duration-100 active:scale-95"
-                        >
-                            Reset [ESC]
+                        <button onClick={() => { setInputs({}); setInputHistory([]); setCalculatedField(null); }} className="kpi-clear-btn">
+                            <span>Reset</span>
                         </button>
                     </div>
 
-                    {/* The Two-Tier Recessed Display (Specification #2) */}
-                    <div className="bg-slate-950/80 border border-slate-800/70 rounded-2xl p-5 mb-8 text-right font-mono shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)] relative overflow-hidden">
-                        {/* Top tier (Smaller, muted equation history) */}
-                        <div className="text-slate-500 text-xs tracking-wider uppercase mb-1">
-                            Formula: {resultVarName.toUpperCase()} = {formula}
-                        </div>
-                        
-                        {/* Bottom tier (Large, glowing active result or inputs status) */}
-                        <div className="text-white text-xl md:text-2xl font-bold tracking-tight mt-2 flex items-center justify-end gap-2 flex-wrap">
-                            {calculatedField && calculatedValue !== null ? (
-                                <>
-                                    <span className="text-slate-400 text-sm md:text-base font-normal">Resolved:</span>
-                                    <span className="text-red-500 font-extrabold drop-shadow-[0_0_12px_rgba(239,68,68,0.2)]">
-                                        {targetField?.label} = {formatter(calculatedValue)}
-                                    </span>
-                                </>
-                            ) : (
-                                <span className="text-slate-500 text-xs md:text-sm font-semibold tracking-normal">
-                                    Fill in any {allVariables.length - 1} values to solve
-                                </span>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Mode Selector Toggles */}
-                    <div className="flex bg-slate-950 p-1 rounded-xl w-fit mb-8 border border-slate-850">
-                        <button 
-                            onClick={() => setInputMode('standard')} 
-                            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 ${
-                                inputMode === 'standard' 
-                                    ? 'bg-slate-800 text-white shadow-sm' 
-                                    : 'text-slate-400 hover:text-slate-200'
-                            }`}
-                        >
-                            Interactive Interface
+                    {/* Mode Toggles */}
+                    <div className="kpi-toggle-container mb-6">
+                        <button onClick={() => setInputMode('standard')} className={`kpi-toggle-btn ${inputMode === 'standard' ? 'active' : ''}`}>
+                            Interactive Fields
                         </button>
-                        <button 
-                            onClick={() => setInputMode('nlp')} 
-                            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 ${
-                                inputMode === 'nlp' 
-                                    ? 'bg-slate-800 text-white shadow-sm' 
-                                    : 'text-slate-400 hover:text-slate-200'
-                            }`}
-                        >
+                        <button onClick={() => setInputMode('nlp')} className={`kpi-toggle-btn ${inputMode === 'nlp' ? 'active' : ''}`}>
                             Natural Language AI
                         </button>
                     </div>
 
-                    {/* Inputs Matrix (Specification #1 & #3) */}
+                    {/* Inputs */}
                     <div className="space-y-6">
+
                         {inputMode === 'standard' ? (
-                            <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl overflow-hidden px-5 md:px-6 shadow-[inset_0_1px_4px_rgba(0,0,0,0.2)] divide-y divide-slate-900">
+                            <div className="space-y-4">
                                 {allVariables.map((field) => {
                                     const isCalc = calculatedField === field.name;
                                     const isFocused = activeInput === field.name;
                                     return (
                                         <div 
                                             key={`field-${field.name}`}
-                                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-5 gap-3"
+                                            className={`flex items-center justify-between border rounded-xl px-4 py-3.5 transition-all bg-white relative ${
+                                                isCalc 
+                                                    ? 'border-emerald-200 bg-emerald-50/10' 
+                                                    : isFocused 
+                                                        ? 'border-red-500 ring-4 ring-red-50' 
+                                                        : 'border-slate-200 hover:border-slate-300'
+                                            }`}
                                         >
-                                            {/* Label Column */}
+                                            {/* Label Area */}
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-slate-200 tracking-tight">
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider ${isCalc ? 'text-emerald-700' : 'text-slate-400'}`}>
                                                     {field.label}
                                                 </span>
-                                                <span className="text-[9px] font-mono text-slate-500 tracking-wider uppercase mt-0.5">
-                                                    {field.type === 'currency' ? 'Currency Metric' : field.type === 'percentage' ? 'Percentage Ratio' : 'Count Parameter'}
-                                                </span>
                                                 {isCalc && (
-                                                    <span className="inline-flex items-center gap-1.5 text-[8px] font-bold text-red-400 bg-red-950/30 border border-red-900/30 px-2.5 py-0.5 rounded-full mt-1.5 w-fit uppercase tracking-wider">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                                                        Calculated Output
+                                                    <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md mt-0.5 w-fit uppercase">
+                                                        Calculated
                                                     </span>
                                                 )}
                                             </div>
 
-                                            {/* Input Controls Column */}
-                                            <div 
-                                                className={`flex items-center border rounded-xl px-3.5 py-2.5 transition-all duration-100 w-full sm:w-[220px] ${
-                                                    isCalc 
-                                                        ? 'border-red-900/60 bg-red-950/10 shadow-[0_2px_8px_rgba(239,68,68,0.02)]' 
-                                                        : isFocused 
-                                                            ? 'border-red-500 bg-slate-900 ring-4 ring-red-950/30 shadow-[0_0_12px_rgba(239,68,68,0.05)]' 
-                                                            : 'border-slate-800 hover:border-slate-700 bg-slate-900/40'
-                                                }`}
-                                            >
+                                            {/* Input Value & Unit Selector */}
+                                            <div className="flex items-center gap-2">
                                                 <input
                                                     type="number"
-                                                    className={`bg-transparent border-none text-right text-base font-extrabold outline-none p-0 focus:ring-0 w-full placeholder-slate-700 text-white ${
-                                                        isCalc ? 'text-red-400 font-black' : 'text-slate-100'
+                                                    className={`bg-transparent border-none text-right text-lg font-bold outline-none p-0 focus:ring-0 w-[140px] ${
+                                                        isCalc ? 'text-emerald-700 font-extrabold' : 'text-slate-800'
                                                     }`}
-                                                    placeholder="0.00"
+                                                    placeholder="0"
                                                     value={inputs[field.name] || ''}
                                                     onChange={(e) => handleValChange(field.name, e.target.value)}
                                                     onFocus={(e) => { setActiveInput(field.name); e.target.select(); }}
                                                     onBlur={() => setActiveInput(null)}
                                                 />
                                                 {field.type === 'currency' && (
-                                                    <div className="relative flex items-center text-xs text-slate-400 font-bold border-l pl-2.5 ml-2.5 border-slate-800">
+                                                    <div className="relative flex items-center text-xs text-slate-500 font-bold border-l pl-2.5 ml-1.5 border-slate-200">
                                                         <select
                                                             value={currencyCode}
                                                             onChange={(e) => setCurrencyCode(e.target.value)}
-                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-4 text-slate-300 font-extrabold text-[11px] focus:ring-0"
+                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-3.5 text-slate-600 font-bold"
                                                         >
                                                             <option value="AED">AED</option>
                                                             <option value="USD">USD</option>
@@ -406,11 +345,11 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                                             <option value="GBP">GBP</option>
                                                             <option value="INR">INR</option>
                                                         </select>
-                                                        <span className="text-[7px] text-slate-500 pointer-events-none absolute right-0">▼</span>
+                                                        <span className="text-[7px] text-slate-400 pointer-events-none absolute right-0">▼</span>
                                                     </div>
                                                 )}
                                                 {field.type === 'percentage' && (
-                                                    <span className="text-slate-500 font-extrabold text-xs ml-2.5 border-l pl-2.5 border-slate-800">%</span>
+                                                    <span className="text-slate-400 font-bold text-sm ml-1.5">%</span>
                                                 )}
                                             </div>
                                         </div>
@@ -418,47 +357,40 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                 })}
                             </div>
                         ) : (
-                            <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/60 p-4 transition-all focus-within:border-red-500 focus-within:ring-4 focus-within:ring-red-950/30">
+                            <div className="lunar-textarea p-4 border border-slate-200 bg-slate-50/50">
                                 <textarea
-                                    className="w-full bg-transparent text-slate-200 font-normal text-sm md:leading-relaxed resize-none outline-none placeholder-slate-650 min-h-[120px]"
-                                    placeholder="Type your parameters in plain English, e.g.: 'We had spend is 4000 and impressions is 90000'..."
+                                    className="w-full bg-transparent text-slate-900 font-normal text-sm md:leading-relaxed resize-none outline-none placeholder-slate-400 min-h-[100px]"
+                                    placeholder="Enter campaign logs, e.g. 'We spent $5,000 and got 100,000 impressions...'"
                                     value={nlpString}
                                     onChange={(e) => setNlpString(e.target.value)}
                                 />
-                                <div className="mt-3 pt-3 border-t border-slate-900 flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                    <span>AI Natural Language Parser</span>
-                                    <span>Mapped: {Object.values(inputs).filter(v => v !== '').length} / {allVariables.length} Fields</span>
+                                <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center text-[10px] font-medium text-slate-400">
+                                    <span>AI Mapping Active</span>
+                                    <span>Detected: {Object.values(inputs).filter(v => v !== '').length} / {allVariables.length}</span>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Context Explanation Widgets (Specification #1) */}
-                    <div className="bg-slate-950 border border-slate-850 p-6 rounded-2xl mt-8 shadow-sm">
-                        <div className="flex gap-4 items-start">
-                            <div className="w-8 h-8 rounded-full bg-red-950/30 border border-red-900/30 flex items-center justify-center text-red-500 text-sm font-bold flex-shrink-0">
-                                ℹ
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
-                                    Projection & Insight Matrix
-                                </h3>
-                                <p className="text-xs text-slate-500 mb-4 leading-relaxed font-medium">
-                                    Modifying any input automatically recalculates the dependent system matrices.
+                    {/* Context Explanation Card */}
+                    <div className="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl mt-8 text-xs text-slate-600 leading-relaxed shadow-sm">
+                        <div className="flex gap-3 items-start">
+                            <span className="text-red-600 text-sm font-bold mt-0.5">ℹ</span>
+                            <div>
+                                <p className="font-bold text-slate-800 text-sm mb-1">
+                                    Equation System Matrix
                                 </p>
-                                <div className="space-y-2">
+                                <p className="font-mono text-[9px] text-slate-400 mb-2">
+                                    Formula: {resultVarName} = {formula}
                                     {calculatedField && (
-                                        <div className="flex justify-between items-start text-[10px] font-mono border-t border-slate-900 pt-2">
-                                            <span className="text-slate-500">Trace</span>
-                                            <span className="text-red-400 font-bold bg-red-950/20 px-2 py-0.5 rounded border border-red-900/20 text-right max-w-xs break-all">
-                                                {liveEquationTrace}
-                                            </span>
-                                        </div>
+                                        <span className="block mt-1.5 text-slate-500 font-semibold bg-white border border-slate-100 rounded px-1.5 py-0.5 w-fit">
+                                            Active Trace: {liveEquationTrace}
+                                        </span>
                                     )}
-                                </div>
-                                <div className="mt-4 pt-3 border-t border-slate-900 text-xs font-medium text-slate-300 leading-relaxed">
-                                    {calculatedField && calculatedValue !== null ? magicSentence : 'Fill in any parameters above to solve the equation matrix automatically.'}
-                                </div>
+                                </p>
+                                <p className="font-medium text-slate-600">
+                                    {calculatedField && calculatedValue !== null ? magicSentence : 'Fill in any parameters above to solve the equation matrix automatically in real-time.'}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -470,11 +402,13 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
 
 /**
  * Solve for a specific input variable given that we know the result.
+ * resultVal = formula(targetInput, otherKnowns)
+ * => find targetInput
  */
 function solveForInput(
     formula: string,
     targetVar: string,
-    knownInputs: Record<string, number>,
+    knownInputs: Record<string, number>,  // excludes targetVar AND the result var
     resultVal: number
 ): number | null {
     const obj = (x: number): number => {
@@ -489,7 +423,7 @@ function solveForInput(
         [1e-6, 1e9],
         [0.0001, 999999],
         [1, 1000000000],
-        [0.01, 100],
+        [0.01, 100],       // for percentages / ratios
         [0.00001, 100000],
     ];
 
