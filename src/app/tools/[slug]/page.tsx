@@ -124,6 +124,15 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
 
+            {/* Visible Breadcrumbs */}
+            <nav className="flex items-center gap-2 text-xs text-gray-500 mb-6 font-semibold uppercase tracking-wider">
+                <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+                <span>/</span>
+                <Link href="/tools" className="hover:text-accent transition-colors">Tools</Link>
+                <span>/</span>
+                <span className="text-gray-400">{tool.title}</span>
+            </nav>
+
             <Link href="/tools" className="flex items-center gap-2 text-accent mb-6 font-medium">
                 <ArrowLeft size={20} /> Back to Directory
             </Link>

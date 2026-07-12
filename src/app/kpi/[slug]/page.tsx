@@ -125,6 +125,16 @@ export default async function KpiDetailPage({ params }: { params: Promise<{ slug
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
+            
+            {/* Visible Breadcrumbs */}
+            <nav className="flex items-center gap-2 text-xs text-gray-500 mb-6 font-semibold uppercase tracking-wider">
+                <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+                <span>/</span>
+                <Link href="/kpi" className="hover:text-accent transition-colors">KPI Calculators</Link>
+                <span>/</span>
+                <span className="text-gray-400">{kpi.title}</span>
+            </nav>
+
             <Link href="/kpi" className="inline-flex items-center text-accent hover:underline mb-8 font-medium">
                 <ArrowLeft size={16} className="mr-2" />
                 Back to Calculators
