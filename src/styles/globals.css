@@ -616,6 +616,7 @@ li {
   line-height: 1.8;
   font-family: var(--font-montserrat), sans-serif;
   color: var(--color-text-main, #111827);
+  white-space: pre-wrap;
 }
 
 .cms-content p {

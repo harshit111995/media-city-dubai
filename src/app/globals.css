@@ -96,6 +96,7 @@ a {
   line-height: 1.8;
   font-family: var(--font-montserrat), sans-serif;
   color: #d1d5db; /* gray-300 */
+  white-space: pre-wrap;
 }
 
 .cms-content p {
