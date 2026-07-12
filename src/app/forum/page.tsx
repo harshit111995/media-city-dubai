@@ -82,11 +82,19 @@ export default async function ForumPage() {
                     <h1 className={`${styles.title} text-gradient`}>Community Forum</h1>
                     <p className="text-muted mt-2">Connect, share, and grow with your peers.</p>
 
-                    <div className="flex gap-2 mt-4 text-sm">
-                        <Link href="/forum/category/Industry%20News" className="text-accent hover:underline">Industry News</Link> •
-                        <Link href="/forum/category/Career%20Advice" className="text-accent hover:underline">Career Advice</Link> •
-                        <Link href="/forum/category/Tech%20Support" className="text-accent hover:underline">Tech Support</Link> •
-                        <Link href="/forum/category/General%20Discussion" className="text-accent hover:underline">General</Link>
+                    <div className="flex flex-wrap gap-2.5 mt-5 text-xs font-bold uppercase tracking-wider">
+                        <Link href="/forum/category/Industry%20News" className="bg-white/5 border border-white/10 hover:border-accent/40 text-accent hover:text-white px-4 py-2 rounded-full transition-all">
+                            Industry News
+                        </Link>
+                        <Link href="/forum/category/Career%20Advice" className="bg-white/5 border border-white/10 hover:border-accent/40 text-accent hover:text-white px-4 py-2 rounded-full transition-all">
+                            Career Advice
+                        </Link>
+                        <Link href="/forum/category/Tech%20Support" className="bg-white/5 border border-white/10 hover:border-accent/40 text-accent hover:text-white px-4 py-2 rounded-full transition-all">
+                            Tech Support
+                        </Link>
+                        <Link href="/forum/category/General%20Discussion" className="bg-white/5 border border-white/10 hover:border-accent/40 text-accent hover:text-white px-4 py-2 rounded-full transition-all">
+                            General
+                        </Link>
                     </div>
                 </div>
             </header>

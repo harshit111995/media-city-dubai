@@ -89,30 +89,26 @@
 .splitLayout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
+    gap: 5rem;
     align-items: center;
-}
-@media (max-width: 768px) {
-    .splitLayout, .splitLayoutReverse {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
 }
 
 /* Reverse layout for alternating sections */
 .splitLayoutReverse {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
+    gap: 5rem;
     align-items: center;
 }
 
 @media (max-width: 768px) {
-
+    .section {
+        padding: 4rem 1rem;
+    }
     .splitLayout,
     .splitLayoutReverse {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 2.5rem;
     }
 
     /* Ensure image is arguably better on top or bottom depending on content, 
@@ -129,18 +125,18 @@
 }
 
 .sectionTitle {
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-size: clamp(2rem, 5vw, 2.75rem);
     font-weight: 800;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     line-height: 1.1;
     color: var(--color-text-main);
 }
 
 .sectionText {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     color: var(--color-text-muted);
-    margin-bottom: 2rem;
-    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    line-height: 1.65;
 }
 
 .imageContainer {
@@ -168,8 +164,8 @@
 /* Tools Strip (Keep as simple grid or bar) */
 .toolsSection {
     background: var(--color-secondary);
-    padding: 3rem 1rem;
-    margin: 2rem 0;
+    padding: 6rem 1rem;
+    margin: 4rem 0;
 }
 
 .featuresGrid {
