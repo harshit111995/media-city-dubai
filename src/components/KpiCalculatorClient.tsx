@@ -293,19 +293,21 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                     </div>
 
                     {/* Centered Result Display */}
-                    <div className="mb-8 py-6 text-center border-b border-slate-50">
-                        <span className="text-[10px] font-bold tracking-widest uppercase text-slate-400">
+                    <div className="mb-8 py-6 text-center border-b border-slate-100">
+                        <span className="text-[10px] font-bold tracking-widest uppercase text-red-600 bg-red-50/80 px-3 py-1 rounded-full border border-red-100">
                             Calculated {targetField?.label}
                         </span>
                         
-                        <div className="my-2 relative inline-flex items-center justify-center">
-                            <div className="lunar-massive-text">
+                        <div className="my-3 relative inline-flex items-center justify-center">
+                            <div className="lunar-massive-text !text-red-600 !font-extrabold tracking-tight">
                                 <AnimatedNumber value={calculatedValue} formatFn={formatter} />
                             </div>
                         </div>
 
-                        <div className="text-[10px] text-slate-400 font-mono mt-1 opacity-70">
-                            Equation: {liveEquationTrace}
+                        <div className="mt-2">
+                            <span className="px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-md inline-block font-mono text-[9px] text-slate-400">
+                                Equation: {liveEquationTrace}
+                            </span>
                         </div>
                     </div>
 
@@ -351,7 +353,7 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                                 </span>
                                                 <span className="text-slate-400 hover:text-slate-600 cursor-pointer text-xs font-bold leading-none">•••</span>
                                             </div>
-                                            <div className={`flex items-center justify-between border rounded-xl px-4 py-3.5 transition-all bg-white relative ${activeInput === field.name ? 'border-blue-500 ring-4 ring-blue-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
+                                            <div className={`flex items-center justify-between border rounded-xl px-4 py-3.5 transition-all bg-white relative ${activeInput === field.name ? 'border-red-500 ring-4 ring-red-50' : 'border-slate-200 hover:border-slate-300'}`}>
                                                 <input
                                                     type="number"
                                                     className="w-full bg-transparent border-none text-base font-semibold text-slate-800 placeholder-slate-300 outline-none p-0 focus:ring-0"
@@ -362,11 +364,11 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                                     onBlur={() => setActiveInput(null)}
                                                 />
                                                 {field.type === 'currency' && (
-                                                    <div className="relative flex items-center text-xs text-blue-600 font-bold border-l pl-3 ml-2 border-slate-200">
+                                                    <div className="relative flex items-center text-xs text-red-600 font-bold border-l pl-3 ml-2 border-slate-200">
                                                         <select
                                                             value={currencyCode}
                                                             onChange={(e) => setCurrencyCode(e.target.value)}
-                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-4 text-blue-600 font-bold"
+                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-4 text-red-600 font-bold"
                                                         >
                                                             <option value="AED">AED</option>
                                                             <option value="USD">USD</option>
@@ -374,7 +376,7 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                                                             <option value="GBP">GBP</option>
                                                             <option value="INR">INR</option>
                                                         </select>
-                                                        <span className="text-[8px] text-blue-500 pointer-events-none absolute right-0">▼</span>
+                                                        <span className="text-[8px] text-red-500 pointer-events-none absolute right-0">▼</span>
                                                     </div>
                                                 )}
                                                 {field.type === 'percentage' && (
@@ -407,11 +409,19 @@ export default function KpiCalculatorClient({ title, formula, fields }: KpiCalcu
                         )}
                     </div>
 
-                    {/* Lavender Info Box */}
-                    <div className="bg-indigo-50/50 border border-indigo-100/30 p-6 rounded-2xl mt-8 text-sm text-slate-700 leading-relaxed">
-                        <p className="font-semibold text-slate-800">
-                            {magicSentence}
-                        </p>
+                    {/* Minimal Info Box */}
+                    <div className="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl mt-8 text-xs text-slate-600 leading-relaxed shadow-sm">
+                        <div className="flex gap-3 items-start">
+                            <span className="text-red-600 text-sm font-bold mt-0.5">ℹ</span>
+                            <div>
+                                <p className="font-bold text-slate-800 text-sm mb-1">
+                                    Formula Context & Meaning
+                                </p>
+                                <p className="font-medium text-slate-600">
+                                    {magicSentence}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
