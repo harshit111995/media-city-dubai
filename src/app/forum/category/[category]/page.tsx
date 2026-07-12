@@ -88,7 +88,7 @@ export default async function ForumCategoryPage({ params }: { params: Promise<{ 
                         <div key={topic.id} className={styles.topicRow}>
                             <div className="flex items-start w-full">
                                 {/* Thumbnail on left */}
-                                <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden relative mr-5 bg-white/5 border border-white/10 hidden sm:block">
+                                <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden relative mr-5 bg-white/5 border border-white/10 block">
                                     <Image 
                                         src={topic.thumbnail || topic.headerImage || (
                                             topic.category === 'Industry News' ? '/images/forum-minimalist.png' :

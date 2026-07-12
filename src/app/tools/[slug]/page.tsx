@@ -226,30 +226,30 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
 
 
                 <aside className={styles.sidebar}>
-                    <div className="glass-panel p-6 rounded-xl">
-                        <h3 className="text-lg font-bold mb-4 border-b border-white/10 pb-2">At a Glance</h3>
+                    <div className="bg-white border border-slate-200 shadow-sm p-6 rounded-2xl">
+                        <h3 className="text-base font-bold mb-5 border-b border-slate-100 pb-3 text-slate-900 uppercase tracking-wider">At a Glance</h3>
 
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {tool.pricing && (
-                                <div className="mb-4">
-                                    <span className="block text-sm text-gray-400 mb-1">Pricing Model</span>
-                                    <div className="inline-block px-3 py-1 rounded bg-white/5 border border-white/10 font-medium">
+                                <div>
+                                    <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Pricing Model</span>
+                                    <div className="inline-block px-3.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold">
                                         {tool.pricing}
                                     </div>
                                 </div>
                             )}
 
                             <div>
-                                <span className="block text-sm text-gray-400">Website</span>
-                                <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-accent hover:underline break-all">
-                                    Visit Site <ExternalLink size={14} className="flex-shrink-0" />
+                                <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Official Website</span>
+                                <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-accent hover:underline break-all text-sm font-bold mt-1">
+                                    Visit Site <ExternalLink size={13} className="flex-shrink-0" />
                                 </a>
                             </div>
 
                             {/* Internal Cross-Link: KPIs */}
-                            <div className="pt-4 mt-4 border-t border-white/10">
-                                <span className="block text-sm text-gray-400 mb-3 uppercase tracking-tighter font-bold">Measure Performance</span>
-                                <div className="space-y-2">
+                            <div className="pt-5 mt-5 border-t border-slate-100">
+                                <span className="block text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-widest">Measure Performance</span>
+                                <div className="space-y-2.5">
                                     {(await prisma.kpi.findMany({
                                         take: 3,
                                         orderBy: { title: 'asc' }
@@ -257,7 +257,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                                         <Link 
                                             key={k.id} 
                                             href={`/kpi/${k.slug}`}
-                                            className="block text-sm text-gray-300 hover:text-accent transition-colors"
+                                            className="block text-xs text-slate-700 hover:text-accent font-semibold transition-colors"
                                         >
                                             {k.title} Calculator →
                                         </Link>
@@ -267,6 +267,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
                         </div>
                     </div>
                 </aside>
+
             </div>
 
             {/* Similar Tools Section */}

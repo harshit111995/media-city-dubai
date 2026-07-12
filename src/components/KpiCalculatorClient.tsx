@@ -398,28 +398,11 @@ export default function KpiCalculatorClient({ title, formula, description, field
                 <div className="lunar-shell p-6 md:p-8 relative overflow-hidden border border-slate-100 rounded-2xl bg-white shadow-sm">
 
                     {/* Header */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-slate-100 gap-4">
+                    <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100 gap-4">
                         <div>
                             <h1 className="text-base font-bold text-slate-900 uppercase tracking-wider">{title}</h1>
                             <p className="text-[10px] text-slate-400 font-mono tracking-tight uppercase">Bidirectional Calculator</p>
                         </div>
-
-                        {allVariables.some(f => f.type === 'currency') && (
-                            <div className="relative">
-                                <select
-                                    className="bg-white border border-slate-200 text-slate-600 text-xs px-3 py-1.5 rounded uppercase tracking-wider font-semibold focus:outline-none focus:border-slate-400 hover:bg-slate-50 transition-all cursor-pointer appearance-none pr-8"
-                                    value={currencyCode}
-                                    onChange={(e) => setCurrencyCode(e.target.value)}
-                                >
-                                    <option value="USD">USD ($)</option>
-                                    <option value="AED">AED (د.إ)</option>
-                                    <option value="EUR">EUR (€)</option>
-                                    <option value="GBP">GBP (£)</option>
-                                    <option value="INR">INR (₹)</option>
-                                </select>
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">▼</span>
-                            </div>
-                        )}
                     </div>
 
                     {/* Mode Toggles */}
@@ -478,28 +461,48 @@ export default function KpiCalculatorClient({ title, formula, description, field
 
                         {/* Input Fields Grid */}
                         {inputMode === 'standard' ? (
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            <div className="space-y-5">
+                                <div className="space-y-5">
                                     {inputFields.map((field) => (
-                                        <div
-                                            key={`in-${field.name}`}
-                                            className={`lunar-input-container p-3 flex flex-col justify-center relative border border-slate-200 transition-all ${activeInput === field.name ? 'lunar-input-active' : ''}`}
-                                        >
-                                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-                                                {field.label}
-                                            </label>
-                                            <div className="flex items-center relative">
-                                                {field.type === 'currency' && <span className="text-slate-400 mr-1 font-semibold text-base">{formatCurrencySymbol()}</span>}
+                                        <div key={`in-${field.name}`} className="flex flex-col w-full">
+                                            <div className="flex justify-between items-center mb-1.5">
+                                                <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                                                    {field.label}
+                                                    {field.name.toLowerCase().includes('cpm') && (
+                                                        <span className="w-3.5 h-3.5 rounded-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400 border border-slate-200 cursor-help" title="Cost per mille (thousand) impressions">i</span>
+                                                    )}
+                                                </span>
+                                                <span className="text-slate-400 hover:text-slate-600 cursor-pointer text-xs font-bold leading-none">•••</span>
+                                            </div>
+                                            <div className={`flex items-center justify-between border rounded-xl px-4 py-3.5 transition-all bg-white relative ${activeInput === field.name ? 'border-blue-500 ring-4 ring-blue-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
                                                 <input
                                                     type="number"
-                                                    className="w-full bg-transparent border-none text-base font-medium text-slate-900 placeholder-slate-300 outline-none p-0 focus:ring-0"
+                                                    className="w-full bg-transparent border-none text-base font-semibold text-slate-800 placeholder-slate-300 outline-none p-0 focus:ring-0"
                                                     placeholder="0"
                                                     value={inputs[field.name] || ''}
                                                     onChange={(e) => handleInputChange(field.name, e.target.value)}
                                                     onFocus={(e) => { setActiveInput(field.name); e.target.select(); }}
                                                     onBlur={() => setActiveInput(null)}
                                                 />
-                                                {field.type === 'percentage' && <span className="text-slate-400 ml-1 font-semibold text-base">%</span>}
+                                                {field.type === 'currency' && (
+                                                    <div className="relative flex items-center text-xs text-blue-600 font-bold border-l pl-3 ml-2 border-slate-200">
+                                                        <select
+                                                            value={currencyCode}
+                                                            onChange={(e) => setCurrencyCode(e.target.value)}
+                                                            className="bg-transparent border-none outline-none appearance-none cursor-pointer pr-4 text-blue-600 font-bold"
+                                                        >
+                                                            <option value="AED">AED</option>
+                                                            <option value="USD">USD</option>
+                                                            <option value="EUR">EUR</option>
+                                                            <option value="GBP">GBP</option>
+                                                            <option value="INR">INR</option>
+                                                        </select>
+                                                        <span className="text-[8px] text-blue-500 pointer-events-none absolute right-0">▼</span>
+                                                    </div>
+                                                )}
+                                                {field.type === 'percentage' && (
+                                                    <span className="text-slate-400 font-bold text-sm ml-2">%</span>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -527,11 +530,11 @@ export default function KpiCalculatorClient({ title, formula, description, field
                         )}
                     </div>
 
-                    {/* Summary bar */}
-                    <div className="mt-6 pt-4 border-t border-slate-100 text-center">
-                        <div className="text-xs text-slate-500 leading-relaxed font-normal">
+                    {/* Lavender Info Box */}
+                    <div className="bg-indigo-50/50 border border-indigo-100/30 p-6 rounded-2xl mt-8 text-sm text-slate-700 leading-relaxed">
+                        <p className="font-semibold text-slate-800">
                             {magicSentence}
-                        </div>
+                        </p>
                     </div>
                 </div>
             </div>
